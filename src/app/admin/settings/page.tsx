@@ -1,18 +1,20 @@
 import { requirePermission } from "@/lib/admin-guard";
+import { trpc } from "@/trpc/server";
+import { currency, FREE_SHIPPING_THRESHOLD, formatPrice } from "@/lib/shop-config";
+import { ShopSettingsForm } from "@/components/admin/shop-settings-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui-kit/card";
-import { currency, FREE_SHIPPING_THRESHOLD } from "@/lib/shop-config";
-import { formatPrice } from "@/lib/shop-config";
 
 export const metadata = { title: "Settings" };
 
 export default async function AdminSettingsPage() {
   await requirePermission("settings.edit");
+  const { settings } = await trpc.settings.get();
 
-  const rows = [
+  const fixed = [
     { k: "Currency", v: currency.code },
-    { k: "Free shipping over", v: formatPrice(FREE_SHIPPING_THRESHOLD) },
+    { k: "Free delivery over", v: formatPrice(FREE_SHIPPING_THRESHOLD) },
     {
-      k: "Payments",
+      k: "Card payments",
       v: process.env.STRIPE_SECRET_KEY ? "Stripe key present" : "No Stripe key set",
     },
   ];
@@ -22,17 +24,20 @@ export default async function AdminSettingsPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Shop configuration as it stands right now.
+          Your contact details, opening hours and social accounts, as they
+          appear in the header, the footer and on the contact page.
         </p>
       </div>
 
+      <ShopSettingsForm initial={settings} />
+
       <Card>
         <CardHeader>
-          <CardTitle>Shop</CardTitle>
+          <CardTitle>Set outside the panel</CardTitle>
         </CardHeader>
         <CardContent>
           <dl className="divide-y">
-            {rows.map((row) => (
+            {fixed.map((row) => (
               <div key={row.k} className="flex justify-between gap-6 py-3 text-sm">
                 <dt className="text-muted-foreground">{row.k}</dt>
                 <dd className="text-right font-medium">{row.v}</dd>
@@ -40,9 +45,8 @@ export default async function AdminSettingsPage() {
             ))}
           </dl>
           <p className="mt-6 text-xs text-muted-foreground">
-            These are read from <code>src/lib/shop-config.ts</code> and the
-            environment. Editing them from this screen is on the list — the
-            settings table is already in the database for it.
+            Currency and delivery come from <code>src/lib/shop-config.ts</code>;
+            payment keys come from the environment.
           </p>
         </CardContent>
       </Card>

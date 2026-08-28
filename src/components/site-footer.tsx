@@ -1,8 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { footerLegal, nav, office, site, social, type NavItem } from "@/lib/site";
+import { footerLegal, nav, type NavItem } from "@/lib/site";
+import type { ShopSettings } from "@/lib/shop-settings";
 
-export function SiteFooter({ shopItems }: { shopItems: NavItem[] }) {
+export function SiteFooter({
+  shopItems,
+  shop,
+}: {
+  shopItems: NavItem[];
+  shop: ShopSettings;
+}) {
   // The Shop column comes from the categories chosen in the admin.
   const groups = [
     ...(shopItems.length ? [{ name: "Shop", items: shopItems }] : []),
@@ -32,10 +39,10 @@ export function SiteFooter({ shopItems }: { shopItems: NavItem[] }) {
               className="h-11 w-auto"
             />
             <p className="mt-7 max-w-sm text-sm leading-relaxed">
-              {site.description}
+              {shop.description}
             </p>
             <ul className="mt-8 flex flex-wrap gap-6">
-              {social.map((s) => (
+              {shop.social.map((s) => (
                 <li key={s.name}>
                   <a
                     href={s.href}
@@ -74,26 +81,26 @@ export function SiteFooter({ shopItems }: { shopItems: NavItem[] }) {
               <ul className="mt-5 space-y-3 text-sm">
                 <li>
                   <span className="block text-foreground/40">Studio</span>
-                  {office.city}, {office.country}
-                  {office.address ? <span className="block">{office.address}</span> : null}
+                  {shop.city}, {shop.country}
+                  {shop.address ? <span className="block">{shop.address}</span> : null}
                 </li>
-                {office.phone ? (
+                {shop.phone ? (
                   <li>
                     <span className="block text-foreground/40">Phone</span>
-                    <a href={`tel:${office.tel}`} className="hover:text-foreground">
-                      {office.phone}
+                    <a href={`tel:${shop.tel}`} className="hover:text-foreground">
+                      {shop.phone}
                     </a>
                   </li>
                 ) : null}
                 <li>
                   <span className="block text-foreground/40">Email</span>
-                  <a href={`mailto:${site.email}`} className="hover:text-foreground">
-                    {site.email}
+                  <a href={`mailto:${shop.email}`} className="hover:text-foreground">
+                    {shop.email}
                   </a>
                 </li>
                 <li>
                   <span className="block text-foreground/40">Hours</span>
-                  {office.hours}
+                  {shop.hours}
                 </li>
               </ul>
             </div>
@@ -107,8 +114,8 @@ export function SiteFooter({ shopItems }: { shopItems: NavItem[] }) {
             than wrapping into a ragged block. */}
         <div className="shell flex flex-col gap-5 py-5 md:flex-row md:items-center md:justify-between md:gap-8 md:py-4">
           <p className="label leading-relaxed">
-            © {new Date().getFullYear()} {site.registered}
-            <span className="hidden sm:inline"> — {site.tagline}</span>
+            © {new Date().getFullYear()} {shop.registered}
+            <span className="hidden sm:inline"> — {shop.tagline}</span>
           </p>
           <ul className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:gap-x-7 md:gap-y-2">
             {footerLegal.map((l) => (
@@ -123,10 +130,10 @@ export function SiteFooter({ shopItems }: { shopItems: NavItem[] }) {
             ))}
             <li>
               <a
-                href={`mailto:${site.email}`}
+                href={`mailto:${shop.email}`}
                 className="label transition-opacity hover:opacity-60"
               >
-                {site.email}
+                {shop.email}
               </a>
             </li>
           </ul>

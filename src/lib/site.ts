@@ -1,6 +1,9 @@
 // Single source of truth for navigation, contact details and the
 // numbers we quote across the site.
 
+/* Fixed facts about the site itself. Everything a shopkeeper might
+   want to change — contact details, hours, social accounts — lives in
+   the settings table instead; see `src/lib/shop-settings.ts`. */
 export const site = {
   name: "AUTOTRIZ",
   registered: "AUTOTRIZ®",
@@ -10,23 +13,6 @@ export const site = {
   email: "info@auto-triz.com",
   description:
     "AUTOTRIZ manufactures professional nano ceramic coatings for automotive paint, glass, wheels and interiors. Patented polysilazane chemistry, tested and certified by TÜV SÜD and SGS.",
-};
-
-export const social = [
-  { name: "Instagram", href: "https://www.instagram.com/autotrizofficial" },
-  { name: "Facebook", href: "https://www.facebook.com/autotrizworld" },
-  { name: "YouTube", href: "https://www.youtube.com/@autotrizofficial" },
-];
-
-/** The one office. Fill in the phone and street address — both render
- *  only when set, so nothing shows until the real details are in. */
-export const office = {
-  country: "Bangladesh",
-  city: "Dhaka",
-  phone: "",
-  tel: "",
-  address: "",
-  hours: "Saturday to Thursday, 10:00 – 19:00",
 };
 
 // Headline figures. Kept here so a single edit updates every surface

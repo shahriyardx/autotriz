@@ -5,6 +5,7 @@ import { orderRouter } from "@/server/api/routers/order";
 import { enquiryRouter } from "@/server/api/routers/enquiry";
 import { mediaRouter } from "@/server/api/routers/media";
 import { pageRouter } from "@/server/api/routers/page";
+import { settingsRouter } from "@/server/api/routers/settings";
 import { accountRouter, checkoutRouter } from "@/server/api/routers/checkout";
 import { shopRouter } from "@/server/api/routers/shop";
 import { staffRouter } from "@/server/api/routers/staff";
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   enquiry: enquiryRouter,
   media: mediaRouter,
   page: pageRouter,
+  settings: settingsRouter,
   shop: shopRouter,
   checkout: checkoutRouter,
   account: accountRouter,

@@ -3,8 +3,9 @@ import { LeadForm } from "@/components/lead-form";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 import { Band, Heading } from "@/components/ui";
-import { office, site, social } from "@/lib/site";
+
 import { getPage } from "@/lib/page-store";
+import { getShopSettings } from "@/lib/shop-store";
 import { Markdown } from "@/components/markdown";
 
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export default async function ContactPage({
 }: {
   searchParams: Promise<{ topic?: string }>;
 }) {
-  const page = await getPage("contact");
+  const [page, shop] = await Promise.all([getPage("contact"), getShopSettings()]);
   const { topic: raw } = await searchParams;
   const topic: Topic = topics.includes(raw as Topic) ? (raw as Topic) : "general";
 
@@ -46,20 +47,20 @@ export default async function ContactPage({
             <Reveal as="li" className="text-center">
               <p className="label text-muted-foreground">Location</p>
               <p className="display-tight mt-4 text-lg">
-                {office.city}, {office.country}
+                {shop.city}, {shop.country}
               </p>
-              {office.address ? (
-                <p className="mt-2 text-sm text-foreground/75">{office.address}</p>
+              {shop.address ? (
+                <p className="mt-2 text-sm text-foreground/75">{shop.address}</p>
               ) : null}
             </Reveal>
             <Reveal as="li" delay={1} className="text-center">
               <p className="label text-muted-foreground">Phone</p>
-              {office.phone ? (
+              {shop.phone ? (
                 <a
-                  href={`tel:${office.tel}`}
+                  href={`tel:${shop.tel}`}
                   className="display-tight mt-4 block text-lg transition-colors hover:text-primary"
                 >
-                  {office.phone}
+                  {shop.phone}
                 </a>
               ) : (
                 <p className="display-tight mt-4 text-lg text-muted-foreground">Coming soon</p>
@@ -67,7 +68,7 @@ export default async function ContactPage({
             </Reveal>
             <Reveal as="li" delay={2} className="text-center">
               <p className="label text-muted-foreground">Hours</p>
-              <p className="display-tight mt-4 text-lg">{office.hours}</p>
+              <p className="display-tight mt-4 text-lg">{shop.hours}</p>
             </Reveal>
           </ul>
         </div>
@@ -80,10 +81,10 @@ export default async function ContactPage({
               {page.text("form.directHeading")}
             </Heading>
             <a
-              href={`mailto:${site.email}`}
+              href={`mailto:${shop.email}`}
               className="display-tight mt-6 block break-all text-lg transition-colors hover:text-primary"
             >
-              {site.email}
+              {shop.email}
             </a>
 
             <div className="mt-10">
@@ -94,7 +95,7 @@ export default async function ContactPage({
             <div className="mt-10">
               <p className="label text-muted-foreground">Social</p>
               <ul className="mt-3 space-y-2">
-                {social.map((s) => (
+                {shop.social.map((s) => (
                   <li key={s.name}>
                     <a
                       href={s.href}

@@ -4,10 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CartButton } from "@/components/cart/cart-button";
-import { site, type HeaderEntry } from "@/lib/site";
+import { type HeaderEntry } from "@/lib/site";
+import type { ShopSettings } from "@/lib/shop-settings";
 import { cn } from "@/lib/cn";
 
-export function SiteHeader({ nav: headerNav }: { nav: HeaderEntry[] }) {
+export function SiteHeader({
+  nav: headerNav,
+  shop,
+}: {
+  nav: HeaderEntry[];
+  shop: ShopSettings;
+}) {
   const [open, setOpen] = useState<string | null>(null);
   const [drawer, setDrawer] = useState(false);
 
@@ -53,13 +60,13 @@ export function SiteHeader({ nav: headerNav }: { nav: HeaderEntry[] }) {
       {/* --- primary utility bar --- */}
       <div className="bg-primary text-primary-foreground">
         <div className="shell flex h-10 items-center justify-between gap-6">
-          <p className="label hidden text-primary-foreground/70 sm:block">{site.tagline}</p>
+          <p className="label hidden text-primary-foreground/70 sm:block">{shop.tagline}</p>
           <div className="flex flex-1 items-center justify-end gap-6">
             <a
-              href={`mailto:${site.email}`}
+              href={`mailto:${shop.email}`}
               className="label hidden text-primary-foreground/80 transition-colors hover:text-primary-foreground md:block"
             >
-              {site.email}
+              {shop.email}
             </a>
             <Link
               href="/account"
@@ -78,7 +85,7 @@ export function SiteHeader({ nav: headerNav }: { nav: HeaderEntry[] }) {
           <Link href="/" onClick={close} aria-label="AUTOTRIZ home" className="shrink-0">
             <Image
               src="/brand/autotriz-wordmark.png"
-              alt="AUTOTRIZ — Innovative Surface Creation"
+              alt={`${shop.name} — ${shop.tagline}`}
               width={3339}
               height={729}
               priority
