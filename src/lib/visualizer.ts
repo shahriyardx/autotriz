@@ -374,33 +374,6 @@ export type CarModel = {
 
 export const CARS: CarModel[] = [
   {
-    key: "fortuner",
-    name: "Fortuner",
-    note: "Seven-seat SUV",
-    file: "/visualizer/fortuner.glb",
-    credit:
-      'Based on "Toyota Fortuner 2021" by Asadawut.Kaewma on Sketchfab, CC BY 4.0',
-    paint: ["carpaint"],
-    // Taller body, so the camera stands back and looks slightly down.
-    camera: { position: [4.9, 1.95, -5.8], target: [0, 1.35, 0] },
-    distance: { min: 3.8, max: 12 },
-    forward: 1,
-    length: 4.795,
-  },
-  {
-    key: "mclaren-720s",
-    name: "720S Spider",
-    note: "Open-top supercar",
-    file: "/visualizer/mclaren-720s.glb",
-    credit:
-      'Based on "McLaren 720s Spider" by Mpgs Studios on Sketchfab, CC BY 4.0',
-    paint: ["Car_Paint"],
-    camera: { position: [4.4, 1.45, -5.2], target: [0, 1.0, 0] },
-    distance: { min: 3.4, max: 10.5 },
-    forward: -1,
-    length: 4.543,
-  },
-  {
     key: "supra",
     name: "Supra MK IV",
     note: "Nineties icon",
