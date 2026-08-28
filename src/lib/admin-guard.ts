@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 
 import { can, type Permission } from "@/lib/permissions";
+import { needsSetup } from "@/lib/setup";
 
 const STAFF_ROLES = new Set(["owner", "admin", "manager", "staff"]);
 
@@ -13,7 +14,12 @@ const STAFF_ROLES = new Set(["owner", "admin", "manager", "staff"]);
 export async function requireAdmin() {
   const session = await auth.api.getSession({ headers: await headers() });
 
-  if (!session?.user) redirect("/admin/login");
+  // A shop with no owner has never been set up: the first visitor is
+  // asked to create that account rather than to sign in.
+  if (!session?.user) {
+    if (await needsSetup()) redirect("/admin/setup");
+    redirect("/admin/login");
+  }
   if (!STAFF_ROLES.has(session.user.role ?? "")) redirect("/admin/denied");
   if (session.user.banned) redirect("/admin/denied");
 

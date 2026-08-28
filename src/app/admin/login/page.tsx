@@ -3,11 +3,14 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/admin/login-form";
 import { currentUser } from "@/lib/admin-guard";
+import { needsSetup } from "@/lib/setup";
 
 export const metadata: Metadata = { title: "Sign in", robots: { index: false } };
 
 export default async function AdminLoginPage() {
   if (await currentUser()) redirect("/admin");
+  // Nothing to sign in to yet.
+  if (await needsSetup()) redirect("/admin/setup");
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-5 py-16">

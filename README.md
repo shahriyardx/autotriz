@@ -86,6 +86,10 @@ is resolved by `catalogue.ts` into the price to charge.
 
 ## Admin panel
 
+On a fresh install the first visit to `/admin` asks you to create the owner
+account. That screen disappears the moment an owner exists, and the endpoint
+behind it refuses to run twice.
+
 `/admin` — products, orders, categories, enquiries, staff. See
 `src/app/admin` for the screens, `src/server/api/routers` for the data.
 
