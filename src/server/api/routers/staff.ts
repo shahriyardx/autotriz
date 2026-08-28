@@ -31,7 +31,7 @@ const permissionList = z.array(z.enum(ALL_PERMISSIONS as [Permission, ...Permiss
 export const hashToken = (token: string) => createHash("sha256").update(token).digest("hex");
 
 const inviteUrl = (token: string) => {
-  const base = (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
+  const base = (process.env.BETTER_AUTH_URL ?? "http://localhost:3000").replace(/\/$/, "");
   return `${base}/admin/invite/${token}`;
 };
 

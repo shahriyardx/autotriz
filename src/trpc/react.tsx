@@ -12,7 +12,7 @@ export const api = createTRPCReact<AppRouter>();
 function baseUrl() {
   // In the browser a relative path is enough; on the server it is not.
   if (typeof window !== "undefined") return "";
-  if (process.env.APP_URL) return process.env.APP_URL;
+  if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
   return `http://localhost:${process.env.PORT ?? 3000}`;
 }
 

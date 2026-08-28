@@ -200,7 +200,7 @@ export const checkoutRouter = createTRPCRouter({
     /* ---- card payments hand over to Stripe ---- */
     if (wantsCard) {
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-      const base = (process.env.APP_URL ?? site.url).replace(/\/$/, "");
+      const base = (process.env.BETTER_AUTH_URL ?? site.url).replace(/\/$/, "");
 
       const session = await stripe.checkout.sessions.create({
         mode: "payment",

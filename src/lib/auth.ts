@@ -13,8 +13,8 @@ import * as authSchema from "@/db/auth-schema";
  */
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", schema: authSchema }),
-  secret: process.env.AUTH_SECRET,
-  baseURL: process.env.APP_URL ?? "http://localhost:3000",
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
   emailAndPassword: {
     enabled: true,
     // No public sign-up route, so nothing to verify by email yet.

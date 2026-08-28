@@ -47,7 +47,7 @@ ENV NODE_ENV=production
 # constructed from this, never connected to: every route that reads data
 # is rendered per request. The real value is injected at runtime.
 ENV DATABASE_URL=postgres://build:build@127.0.0.1:5432/build
-ENV AUTH_SECRET=build-only-secret-not-used-at-runtime
+ENV BETTER_AUTH_SECRET=build-only-secret-not-used-at-runtime
 
 RUN bun run build
 

@@ -187,7 +187,7 @@ it has already run, so restarts and multiple replicas are safe.
 `GET /api/health` reports the app and the database, and is wired to the image's
 own `HEALTHCHECK`. Point Coolify at it.
 
-Required at runtime: `DATABASE_URL`, `AUTH_SECRET`, `APP_URL`. Optional:
+Required at runtime: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`. Optional:
 `STRIPE_SECRET_KEY`, the five `R2_*` values, and the five `SMTP_*` values.
 `R2_PUBLIC_URL` is also needed **at build time** (`--build-arg`), because it
 decides which remote host images may be loaded from.
