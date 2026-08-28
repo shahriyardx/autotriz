@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: autotriz-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: autotriz
+      POSTGRES_PASSWORD: autotriz_dev
+      POSTGRES_DB: autotriz
+    ports:
+      - "5434:5432"
+    volumes:
+      - autotriz-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U autotriz -d autotriz"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  autotriz-pgdata:
+    external: true

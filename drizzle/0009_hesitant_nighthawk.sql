@@ -1,0 +1,1 @@
+ALTER TABLE "categories" ADD COLUMN "show_in_menu" boolean DEFAULT false NOT NULL;

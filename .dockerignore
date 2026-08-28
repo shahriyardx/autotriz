@@ -1,0 +1,24 @@
+# Build output and local state
+.next
+node_modules
+.git
+.gitignore
+
+# Local environment — secrets are injected by the platform, never baked in
+.env
+.env.*
+!.env.example
+
+# Local tooling and notes
+.vscode
+.idea
+*.log
+coverage
+.DS_Store
+
+# Not needed inside the image
+compose.yml
+Dockerfile
+.dockerignore
+README.md
+docs

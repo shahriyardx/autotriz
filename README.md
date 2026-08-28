@@ -1,0 +1,191 @@
+# AUTOTRIZ — website rebuild
+
+A rebuild of [auto-triz.com](https://www.auto-triz.com/) in Next.js, replacing the
+existing Wix site.
+
+**Scope: automotive only, sold direct.** No marine, no aviation, no motorcycle.
+No applicator, distributor or private-label programmes — the site is a brand
+site with a storefront attached.
+
+## Running it
+
+```bash
+pnpm install
+pnpm dev        # http://localhost:3000
+pnpm build
+pnpm lint
+```
+
+## Design
+
+Theming is shadcn tokens only (`src/app/globals.css`). There is no theme
+switch: `src/components/theme-provider.tsx` forces `light` on the storefront
+and `dark` on `/admin` via `next-themes`, which puts the class on `<html>` so
+portalled menus and dialogs follow. A storefront section that wants the
+charcoal look adds `class="dark"` (see `Band tone="dark"`). Do not hard-code
+colours in components — use `bg-background`, `text-foreground`, `bg-card`,
+`text-muted-foreground`, `border-border`, `bg-primary`, and so on.
+
+Prices are in BDT (`src/lib/shop-config.ts`).
+
+The visual language is carried over from the live AUTOTRIZ sites
+(auto-triz.com and the newer autotriz.com.bd), rebuilt rather than copied:
+
+- Yellow utility bar `#f5c645` over a charcoal navigation bar `#3b3b3b`
+- Page body reads as alternating **white / mist / charcoal bands**
+- Section headings are centred, uppercase, with one word carried in yellow,
+  over a short yellow rule
+- Thin yellow line icons for the six protection claims
+- Charcoal footer with the circle mark as a watermark, closing on a yellow
+  legal bar
+
+Type is **Montserrat** for headings and **Roboto** for body copy — the pairing
+the current site uses. Light mode only; there is no dark theme.
+
+Tokens and the `display` / `subhead` / `label` / `band` / `shell` utilities all
+live in `src/app/globals.css`.
+
+## Stack
+
+| Piece | Choice |
+|---|---|
+| Framework | Next.js 16 (App Router, Turbopack, React 19) |
+| Styling | Tailwind CSS 4 |
+| Database | Postgres via Drizzle ORM |
+| Auth | better-auth (admin plugin) |
+| Admin UI | shadcn/ui in `src/components/ui-kit/` |
+| Animation | `motion` scroll reveals |
+| 3D | `three` + `@react-three/fiber` + `drei` — installed, not yet wired |
+| Payments | `stripe` — Checkout session, gated behind config |
+
+## Database
+
+The catalogue lives in Postgres, not in a file. A local instance runs via
+`compose.yml` (Docker) on port 5434:
+
+```bash
+docker compose up -d
+pnpm db:push     # apply schema
+pnpm db:seed     # catalogue + first admin account
+pnpm db:studio   # browse the data
+```
+
+`src/lib/products.ts` is now **seed data only** — the storefront reads through
+`src/lib/catalogue.ts`, which queries the database.
+
+Categories nest (`categories.parent_id`) and a product can sit in several of
+them (`product_categories`), with `products.category_id` as the primary one.
+Browsing a category includes everything in its sub-categories.
+
+Schema changes go through migrations: edit `src/db/schema.ts`, then
+`pnpm db:generate` and `pnpm db:migrate`.
+
+Prices are stored as integer minor units (cents). `price` is the regular
+price; `sale_price` plus the optional `sale_starts_at` / `sale_ends_at` window
+is resolved by `catalogue.ts` into the price to charge.
+
+## Admin panel
+
+`/admin` — products, orders, categories, enquiries, staff. See
+[`docs/ADMIN.md`](docs/ADMIN.md) for the login and how it is wired.
+
+## Storefront
+
+Cart state lives in `localStorage` and is read through `useSyncExternalStore`,
+so the server render, the first client render and every open tab agree.
+
+`POST /api/checkout` builds a Stripe Checkout session. It **re-reads every
+price from the catalogue on the server** and ignores whatever the browser sent.
+
+It refuses to run in two cases:
+
+1. `PLACEHOLDER_PRICING` is `true` in `src/lib/products.ts`
+2. `STRIPE_SECRET_KEY` is not set
+
+### ⚠ Prices are placeholders
+
+The old Wix store published `price: 0` on every product because real pricing sat
+behind a dealer login, so there was nothing to carry over. Every number in
+`src/lib/products.ts` is a stand-in I chose.
+
+While `PLACEHOLDER_PRICING` is `true`, a black warning strip sits at the top of
+every page and checkout is disabled. Replace the prices, flip the flag, set
+`STRIPE_SECRET_KEY`, and the store is live.
+
+## Layout of the code
+
+```
+src/
+  app/
+    (site)/            the storefront, with its own layout
+      shop/            filterable catalogue
+      products/[slug]/ product pages
+      cart/, order/success/
+    admin/             the admin panel, with its own layout
+    api/               auth, checkout, enquiry
+  components/
+    shop/              product card, grid, filters, tabs
+    cart/              store, drawer, cart view
+    admin/             admin-only components
+    ui-kit/            shadcn/ui primitives
+    ui.tsx             storefront primitives (Band, Heading, Button…)
+  db/
+    schema.ts          catalogue, orders, discounts, enquiries, settings
+    auth-schema.ts     generated by better-auth
+    seed/              seeds from src/lib/products.ts
+  lib/
+    catalogue.ts       storefront read model (server only)
+    shop-config.ts     currency, price formatting, pricing flag
+    admin-actions.ts   server actions behind requireAdmin()
+    site.ts            nav, offices, stats, certifications
+    legal.ts           privacy / terms / refunds, carried over verbatim
+```
+
+Templates most routes are thin wrappers around:
+
+- `components/category-page.tsx` — the four range pages
+- `components/page-hero.tsx` — the charcoal page banner
+- `components/legal-page.tsx` — the three policy pages
+
+## Content provenance
+
+Product names, SKUs, pack shots and legal copy come from the live site.
+
+Two exceptions, both deliberate:
+
+- **Nine coating descriptions are new.** The old store had no per-product copy
+  for them, only a shared category blurb.
+- **HYDROPEL has no pack shot.** The old site never served one, so it falls back
+  to `public/products/_placeholder.webp`. Drop the real image in and update the
+  `image` field.
+
+The registered entity is **Triz International Sdn. Bhd.**
+
+## Not done yet
+
+See `docs/BUILD-PLAN.md`: the 3D hero, real prices, payment keys, and the 17
+language locales.
+
+## Deploying
+
+The `Dockerfile` builds with Bun and runs on Bun. Next.js traces the server it
+needs into `.next/standalone`, so the image carries no project `node_modules`
+beyond the two packages the migration step uses. It comes out around 270 MB.
+
+```bash
+docker build --build-arg R2_PUBLIC_URL=https://cdn.example.com -t autotriz .
+docker run -p 3000:3000 --env-file .env.production autotriz
+```
+
+Migrations run **when the container starts**, not when it is built — there is no
+database at build time. `docker-entrypoint.sh` waits up to a minute for the
+database, applies anything pending, then starts the server. Drizzle records what
+it has already run, so restarts and multiple replicas are safe.
+
+`GET /api/health` reports the app and the database, and is wired to the image's
+own `HEALTHCHECK`. Point Coolify at it.
+
+Required at runtime: `DATABASE_URL`, `AUTH_SECRET`, `APP_URL`. Optional:
+`STRIPE_SECRET_KEY`, the five `R2_*` values, and the five `SMTP_*` values.
+`R2_PUBLIC_URL` is also needed **at build time** (`--build-arg`), because it
+decides which remote host images may be loaded from.
