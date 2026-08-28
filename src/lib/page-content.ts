@@ -178,7 +178,7 @@ export const PAGES: PageDef[] = [
     key: "about",
     name: "About",
     path: "/about",
-    description: "The banner and the story sections.",
+    description: "The banner, the science, the four pillars and the company sections.",
     sections: [
       {
         title: "Banner",
@@ -191,21 +191,87 @@ export const PAGES: PageDef[] = [
         ],
       },
       {
-        title: "The chemistry",
+        title: "People behind the innovation",
         fields: [
-          { key: "chemistry.heading", type: "text", label: "Heading" },
-          { key: "chemistry.accent", type: "text", label: "Heading accent (yellow)" },
-          { key: "chemistry.subhead", type: "text", label: "Standfirst" },
-          { key: "chemistry.body", type: "markdown", label: "Body copy" },
+          { key: "people.heading", type: "text", label: "Heading" },
+          { key: "people.accent", type: "text", label: "Heading accent (yellow)" },
+          { key: "people.body", type: "markdown", label: "Body copy" },
+          {
+            key: "people.centres",
+            type: "list",
+            label: "R&D centres",
+            itemLabel: "country",
+            max: 12,
+            fields: [{ key: "name", type: "text", label: "Country" }],
+          },
         ],
       },
       {
-        title: "Manufacturing",
+        title: "Polysilazane",
         fields: [
-          { key: "manufacturing.heading", type: "text", label: "Heading" },
-          { key: "manufacturing.accent", type: "text", label: "Heading accent (yellow)" },
-          { key: "manufacturing.body", type: "markdown", label: "Body copy" },
-          { key: "manufacturing.image", type: "image", label: "Photograph" },
+          { key: "polysilazane.heading", type: "text", label: "Heading" },
+          { key: "polysilazane.accent", type: "text", label: "Heading accent (yellow)" },
+          { key: "polysilazane.subhead", type: "text", label: "Standfirst" },
+          { key: "polysilazane.body", type: "markdown", label: "Body copy" },
+          {
+            key: "polysilazane.resins",
+            type: "list",
+            label: "Resin types",
+            itemLabel: "resin",
+            max: 4,
+            fields: [
+              { key: "code", type: "text", label: "Short code" },
+              { key: "name", type: "text", label: "Name" },
+              { key: "body", type: "textarea", label: "Description" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "What sets us apart",
+        description: "Four claims, each with its own icon.",
+        fields: [
+          { key: "pillars.heading", type: "text", label: "Heading" },
+          { key: "pillars.accent", type: "text", label: "Heading accent (yellow)" },
+          {
+            key: "pillars.items",
+            type: "list",
+            label: "Claims",
+            itemLabel: "claim",
+            max: 6,
+            fields: [
+              { key: "icon", type: "image", label: "Icon" },
+              { key: "title", type: "text", label: "Title" },
+              { key: "body", type: "textarea", label: "Description" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "The company",
+        fields: [
+          { key: "company.heading", type: "text", label: "Heading" },
+          { key: "company.accent", type: "text", label: "Heading accent (yellow)" },
+          {
+            key: "company.items",
+            type: "list",
+            label: "Sections",
+            itemLabel: "section",
+            max: 6,
+            fields: [
+              { key: "title", type: "text", label: "Title" },
+              { key: "body", type: "markdown", label: "Body copy" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Certification",
+        fields: [
+          { key: "certs.heading", type: "text", label: "Heading" },
+          { key: "certs.accent", type: "text", label: "Heading accent (yellow)" },
+          { key: "certs.subhead", type: "text", label: "Standfirst" },
+          { key: "certs.note", type: "text", label: "Closing note" },
         ],
       },
     ],
@@ -381,23 +447,96 @@ export const PAGE_DEFAULTS: Record<string, Record<string, unknown>> = {
   },
   about: {
     hero: {
-      title: "About",
-      accent: "AUTOTRIZ",
-      subhead: "Innovation is the essence of our business",
-      lede: "We formulate, test and fill our own coatings. That is why we can change one for a customer who needs it changed.",
+      title: "Innovation is the essence of",
+      accent: "our business",
+      subhead: "Nano ceramic coatings and specialty chemicals",
+      lede: "AUTOTRIZ is a global leading producer of advanced high-quality and high-purity nano ceramic coatings and specialized chemicals.",
       image: "/photo/coating-application.webp",
     },
-    chemistry: {
-      heading: "The chemistry",
-      accent: "Polysilazane",
-      subhead: "Not another silica suspension",
-      body: "Most coatings on the market are SiO₂ suspensions. AUTOTRIZ is built on polysilazane resins — the binder family used for industrial anti-corrosion and high-temperature protection.",
+    people: {
+      heading: "People behind the",
+      accent: "innovation",
+      body: "We collaborate with six R&D centres for technology support, and are committed to solving global challenges through scientific partnerships with leading universities.\n\nWe leverage our team of chemical engineers and materials scientists in developing the best solution for every application. The futuristic nano ceramic coatings we have developed perform better than the market alternatives because we do not merely improve a surface's properties — we optimise them for the long term.",
+      centres: [
+        { name: "Germany" },
+        { name: "Japan" },
+        { name: "South Korea" },
+        { name: "Taiwan" },
+        { name: "France" },
+        { name: "United States" },
+      ],
     },
-    manufacturing: {
-      heading: "Manufactured",
-      accent: "in house",
-      body: "An automated line running up to 2,000 units an hour, under an ISO 9001:2015 quality system. Our chemists work with research partners and universities across six countries — surface science moves quickly, and a single lab does not keep up with it.",
-      image: "/photo/hero-wash.webp",
+    polysilazane: {
+      heading: "Polysilazane",
+      accent: "makes the difference",
+      subhead: "The binder is what separates a coating from a wax",
+      body: "Binders in our nano-ceramic protective coatings make such a difference. Rely on top performance from our organic polysilazanes, and our inorganic polysilazanes — better known as 3D Matrix technology.\n\nPolysilazanes are polymers of silicon, nitrogen, hydrogen and, in certain cases, carbon. They are either inorganic (perhydropolysilazanes) or organic (organopolysilazanes and polycarbosilazanes) in nature.",
+      resins: [
+        {
+          code: "OPSZ",
+          name: "Organic polysilazane resins",
+          body: "Hydrophobic coatings. Water beads, lifts the dirt with it, and leaves the panel as it rolls off.",
+        },
+        {
+          code: "PHPS",
+          name: "Perhydropolysilazane resins",
+          body: "Hydrophilic coatings. A glass-like film for surfaces where sheeting matters more than beading.",
+        },
+      ],
+    },
+    pillars: {
+      heading: "What sets us",
+      accent: "apart",
+      items: [
+        {
+          icon: "/about/pillar-1.png",
+          title: "Cutting-edge technology",
+          body: "Up-to-date technology, facilities and technical know-how, built on international standards.",
+        },
+        {
+          icon: "/about/pillar-2.png",
+          title: "Durable, high-quality materials",
+          body: "Global reach and connections for sourcing the rarest and finest materials.",
+        },
+        {
+          icon: "/about/pillar-3.png",
+          title: "Bespoke service",
+          body: "Thorough assistance and clear answers for every kind of support request.",
+        },
+        {
+          icon: "/about/pillar-4.png",
+          title: "24/7 customer service",
+          body: "Support by call, email and live chat, across time zones and regions.",
+        },
+      ],
+    },
+    company: {
+      heading: "The",
+      accent: "company",
+      items: [
+        {
+          title: "World leader in nano technology",
+          body: "AUTOTRIZ is a leading name in nano ceramic surface protection, with a series of ceramic coating and paint protection film products, each formulated for a specific surface. Our formulas are designed for paint, vinyl, fabric, glass, leather and more. AUTOTRIZ coatings bond at a nano-molecular level, filling every pore and creating a permanent, protective surface. Our VERTEK films were developed with the same patented polysilazane technology.",
+        },
+        {
+          title: "Safety and regulations",
+          body: "We are committed to supplying products and services of the highest quality and to meeting our customers' requirements. The cornerstone is an effective quality management system that meets ISO 9001:2015, complies with applicable statutory and regulatory requirements, and involves every level of the organisation.",
+        },
+        {
+          title: "State-of-the-art production",
+          body: "We manufacture our own products and are organised to meet growing demand. With extensive raw materials, technical know-how and advanced technology from around the globe, our formulas are developed and tested in-house — which is also why we can supply OEM customers and customise formulations for other brands.\n\nWe work alongside scientists and detailing professionals, so every product is formulated, developed, tested and manufactured in our own facilities.",
+        },
+        {
+          title: "Network and business",
+          body: "We offer top-quality products, outstanding service and technical support to build long-term relationships with the workshops, detailers and car owners we serve, backed by a dedicated customer service desk and our social channels.",
+        },
+      ],
+    },
+    certs: {
+      heading: "Independently",
+      accent: "tested",
+      subhead: "Verified by people who are not us",
+      note: "AUTOTRIZ® is manufactured by Triz International Sdn. Bhd.",
     },
   },
   services: {
