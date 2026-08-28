@@ -165,6 +165,7 @@ export function buildHeaderNav(shopItems: NavItem[]): HeaderEntry[] {
   return [
     ...(shopItems.length ? [{ name: "Shop", items: shopItems }] : []),
     { name: "Services", items: nav[0].items },
+    { name: "Visualizer", href: "/visualizer" },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];
