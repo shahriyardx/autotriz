@@ -387,6 +387,18 @@ export const CARS: CarModel[] = [
     length: 4.46,
   },
   {
+    key: "coupe",
+    name: "Sports Coup\u00e9",
+    note: "Two-door, folding roof",
+    file: "/visualizer/ferrari.glb",
+    credit: "Model from the three.js project",
+    paint: ["Body_Color"],
+    camera: { position: [4.2, 1.4, -5.0], target: [0, 1.0, 0] },
+    distance: { min: 3.2, max: 9.5 },
+    forward: -1,
+    length: 4.53,
+  },
+  {
     key: "supra",
     name: "Supra MK IV",
     note: "Nineties icon",
@@ -398,18 +410,6 @@ export const CARS: CarModel[] = [
     distance: { min: 3.4, max: 10.5 },
     forward: -1,
     length: 4.514,
-  },
-  {
-    key: "coupe",
-    name: "Sports Coup\u00e9",
-    note: "Two-door, folding roof",
-    file: "/visualizer/ferrari.glb",
-    credit: "Model from the three.js project",
-    paint: ["Body_Color"],
-    camera: { position: [4.2, 1.4, -5.0], target: [0, 1.0, 0] },
-    distance: { min: 3.2, max: 9.5 },
-    forward: -1,
-    length: 4.53,
   },
 ];
 
