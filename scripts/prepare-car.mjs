@@ -36,6 +36,7 @@ import {
   textureCompress,
   weld,
 } from "@gltf-transform/functions";
+
 import { MeshoptSimplifier } from "meshoptimizer";
 import draco3d from "draco3dgltf";
 import sharp from "sharp";
@@ -60,7 +61,12 @@ const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies(
 });
 
 const doc = await io.read(input);
-await doc.transform(dedup(), prune(), resample(), weld());
+/* No welding here. Merging vertices also merges the normals that meet
+   at them, and on a mirror-gloss car that shows up as long creases
+   down a door — the surface reads as crash damage when the geometry
+   is in fact untouched. Welding is only needed to make `simplify`
+   work, so it runs there and nowhere else. */
+await doc.transform(dedup(), prune(), resample());
 
 const scene = doc.getRoot().listScenes()[0];
 
@@ -97,6 +103,7 @@ if (triangles > triangleBudget) {
   const ratio = triangleBudget / triangles;
   console.log(`thinning ${Math.round(triangles).toLocaleString()} triangles to ~${triangleBudget.toLocaleString()}`);
   await doc.transform(
+    weld(),
     /* A tight error budget matters more than the ratio. Let the
        collapser wander and it eats the curve of a door panel, which
        reads as accident damage rather than a lower poly count. */
@@ -112,7 +119,7 @@ await doc.transform(
   /* Higher than the defaults. A car is one big smooth surface, and
      coarse normals show up on a bonnet as faceting the moment a
      studio light slides across it. */
-  draco({ quantizePosition: 16, quantizeNormal: 14 }),
+  draco({ quantizePosition: 16, quantizeNormal: 16 }),
 );
 await io.write(output, doc);
 

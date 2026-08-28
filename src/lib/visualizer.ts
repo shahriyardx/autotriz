@@ -388,6 +388,19 @@ export const CARS: CarModel[] = [
     length: 4.795,
   },
   {
+    key: "mclaren-720s",
+    name: "720S Spider",
+    note: "Open-top supercar",
+    file: "/visualizer/mclaren-720s.glb",
+    credit:
+      'Based on "McLaren 720s Spider" by Mpgs Studios on Sketchfab, CC BY 4.0',
+    paint: ["Car_Paint"],
+    camera: { position: [4.4, 1.45, -5.2], target: [0, 1.0, 0] },
+    distance: { min: 3.4, max: 10.5 },
+    forward: -1,
+    length: 4.543,
+  },
+  {
     key: "supra",
     name: "Supra MK IV",
     note: "Nineties icon",
