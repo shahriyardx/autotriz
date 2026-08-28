@@ -159,7 +159,15 @@ function Car({ car, finish, colour }: { car: CarModel; finish: Finish; colour: s
   /* Every model is centred on the origin, sat on the floor and cut to
      life size by `scripts/prepare-car.mjs` before it is committed, so
      nothing needs measuring or moving here. */
-  return <primitive object={scene} />;
+  /* Model makers point the nose whichever way suits them. Turning the
+     ones built back-to-front means every car faces the camera the same
+     way, and — the reason it matters — every car drives off the stand
+     in the same direction instead of half of them reversing. */
+  return (
+    <group rotation-y={car.forward === 1 ? Math.PI : 0}>
+      <primitive object={scene} />
+    </group>
+  );
 }
 
 /* ------------------------------------------------------------------

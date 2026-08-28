@@ -362,6 +362,10 @@ export type CarModel = {
   /** Framing: where the camera starts and how close it may get. */
   camera: { position: [number, number, number]; target: [number, number, number] };
   distance: { min: number; max: number };
+  /** Which way along Z the nose points in the file. The scene turns
+   *  the ones built back-to-front, so every car ends up facing the
+   *  same way and drives off the stand in the same direction. */
+  forward: 1 | -1;
   /** How long the real car is, in metres. Models arrive in whatever
    *  units their maker used, so the scene measures each one and
    *  resizes it to this — one number instead of guessing a scale. */
@@ -378,8 +382,9 @@ export const CARS: CarModel[] = [
       'Based on "Toyota Fortuner 2021" by Asadawut.Kaewma on Sketchfab, CC BY 4.0',
     paint: ["carpaint"],
     // Taller body, so the camera stands back and looks slightly down.
-    camera: { position: [4.9, 1.95, 5.8], target: [0, 1.35, 0] },
+    camera: { position: [4.9, 1.95, -5.8], target: [0, 1.35, 0] },
     distance: { min: 3.8, max: 12 },
+    forward: 1,
     length: 4.795,
   },
   {
@@ -392,6 +397,7 @@ export const CARS: CarModel[] = [
     paint: ["TOYOTA_SUPRA_CAR_PAINT"],
     camera: { position: [4.4, 1.5, -5.2], target: [0, 1.05, 0] },
     distance: { min: 3.4, max: 10.5 },
+    forward: -1,
     length: 4.514,
   },
   {
@@ -404,6 +410,7 @@ export const CARS: CarModel[] = [
     paint: ["Paint1Mtl"],
     camera: { position: [4.3, 1.45, -5.1], target: [0, 1.0, 0] },
     distance: { min: 3.2, max: 10 },
+    forward: -1,
     length: 4.46,
   },
   {
@@ -415,6 +422,7 @@ export const CARS: CarModel[] = [
     paint: ["Body_Color"],
     camera: { position: [4.2, 1.4, -5.0], target: [0, 1.0, 0] },
     distance: { min: 3.2, max: 9.5 },
+    forward: -1,
     length: 4.53,
   },
 ];
