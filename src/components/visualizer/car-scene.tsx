@@ -32,7 +32,7 @@ const DRACO = "/draco/";
 /** Which slot a material in the file belongs to. Names the car lists
  *  win; anything else is guessed, so a model bought later still lands
  *  mostly in the right place without being described first. */
-type Slot = "paint" | "glass" | "tyre" | "interior" | "keep";
+type Slot = "paint" | "glass" | "tyre" | "interior" | "hide" | "keep";
 
 function classify(name: string, car: CarModel): Slot {
   const n = name.trim().toLowerCase();
@@ -40,6 +40,9 @@ function classify(name: string, car: CarModel): Slot {
   if (/glass|windscreen|windshield|window/.test(n)) return "glass";
   if (/tyre|tire|rubber/.test(n)) return "tyre";
   if (/interior|leather|carpet|seat|dashboard|cockpit|upholster/.test(n)) return "interior";
+  /* Models often ship a painted-on shadow blob under the car. The
+     scene casts its own, and the two together look like an oil leak. */
+  if (/shadow|ao.?plane|ground/.test(n)) return "hide";
   if (/body.?colou?r|car.?paint|paint|lackierung|karosserie/.test(n)) return "paint";
   return "keep";
 }
@@ -139,6 +142,7 @@ function Car({ car, finish, colour }: { car: CarModel; finish: Finish; colour: s
       else if (slot === "glass") mesh.material = glass;
       else if (slot === "tyre") mesh.material = tyre;
       else if (slot === "interior") mesh.material = interior;
+      else if (slot === "hide") mesh.visible = false;
     });
   }, [scene, car, paint, glass, tyre, interior]);
 

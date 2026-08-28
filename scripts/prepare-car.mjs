@@ -17,7 +17,8 @@
      · centred on the origin left to right and front to back
      · dropped so its lowest point is the floor
      · resized so its longest side is the real car's length in metres
-     · textures shrunk to 2K and re-encoded as WebP
+     · thinned only if a triangle budget is asked for
+     · textures shrunk and re-encoded as WebP
      · geometry Draco-compressed
 
    The Huracán came out of this at 683 KB, from 7.3 MB.
@@ -31,18 +32,27 @@ import {
   getBounds,
   prune,
   resample,
+  simplify,
   textureCompress,
   weld,
 } from "@gltf-transform/functions";
+import { MeshoptSimplifier } from "meshoptimizer";
 import draco3d from "draco3dgltf";
 import sharp from "sharp";
 
-const [input, output, lengthArg] = process.argv.slice(2);
+const [input, output, lengthArg, budgetArg] = process.argv.slice(2);
 if (!input || !output) {
-  console.error("usage: bun scripts/prepare-car.mjs <input> <output.glb> [length-in-metres]");
+  console.error(
+    "usage: bun scripts/prepare-car.mjs <input> <output.glb> [length-in-metres] [triangle-budget]",
+  );
   process.exit(1);
 }
 const targetLength = Number(lengthArg ?? 4.5);
+
+/* Showroom models are built for still renders and run into millions of
+   triangles, most of them in an interior nobody will open. A car reads
+   perfectly at this budget and a phone can still turn it. */
+const triangleBudget = Number(budgetArg ?? 200_000);
 
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({
   "draco3d.decoder": await draco3d.createDecoderModule(),
@@ -77,9 +87,32 @@ for (const node of scene.listChildren()) {
 }
 scene.addChild(holder);
 
+const triangles = doc
+  .getRoot()
+  .listMeshes()
+  .flatMap((mesh) => mesh.listPrimitives())
+  .reduce((total, primitive) => total + (primitive.getIndices()?.getCount() ?? 0) / 3, 0);
+
+if (triangles > triangleBudget) {
+  const ratio = triangleBudget / triangles;
+  console.log(`thinning ${Math.round(triangles).toLocaleString()} triangles to ~${triangleBudget.toLocaleString()}`);
+  await doc.transform(
+    /* A tight error budget matters more than the ratio. Let the
+       collapser wander and it eats the curve of a door panel, which
+       reads as accident damage rather than a lower poly count. */
+    simplify({ simplifier: MeshoptSimplifier, ratio, error: 0.0002, lockBorder: true }),
+  );
+}
+
 await doc.transform(
-  textureCompress({ encoder: sharp, targetFormat: "webp", resize: [2048, 2048] }),
-  draco(),
+  /* 1K is plenty. The bodywork is repainted by the visualizer and
+     carries no texture at all; what is left is interior trim, which
+     the scene darkens anyway. */
+  textureCompress({ encoder: sharp, targetFormat: "webp", resize: [1024, 1024] }),
+  /* Higher than the defaults. A car is one big smooth surface, and
+     coarse normals show up on a bonnet as faceting the moment a
+     studio light slides across it. */
+  draco({ quantizePosition: 16, quantizeNormal: 14 }),
 );
 await io.write(output, doc);
 
