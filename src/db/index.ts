@@ -23,17 +23,17 @@ const globalForDb = globalThis as unknown as {
   __autotrizDb?: ReturnType<typeof drizzle<typeof schema>>;
 };
 
+/** Somewhere unreachable. `next build` imports every route to collect
+ *  its metadata, and better-auth's adapter reads this handle as it is
+ *  set up — but nothing queries during a build, so a client that could
+ *  never connect is enough. The entrypoint refuses to start the server
+ *  without a real `DATABASE_URL`. */
+const NO_DATABASE = "postgres://unset:unset@127.0.0.1:1/unset";
+
 function connection() {
   if (globalForDb.__autotrizSql) return globalForDb.__autotrizSql;
 
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    throw new Error(
-      "DATABASE_URL is not set. Copy .env.example to .env.local and fill it in.",
-    );
-  }
-
-  const client = postgres(connectionString, {
+  const client = postgres(process.env.DATABASE_URL ?? NO_DATABASE, {
     max: process.env.NODE_ENV === "production" ? 10 : 3,
     prepare: false,
   });

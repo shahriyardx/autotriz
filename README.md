@@ -175,19 +175,22 @@ needs into `.next/standalone`, so the image carries no project `node_modules`
 beyond the two packages the migration step uses. It comes out around 270 MB.
 
 ```bash
-docker build --build-arg R2_PUBLIC_URL=https://cdn.example.com -t autotriz .
+docker build -t autotriz .
 docker run -p 3000:3000 --env-file .env.production autotriz
 ```
+
+The build takes no configuration: nothing is fetched and every route that
+reads data is rendered per request, so the image is the same whatever the
+environment. All settings arrive at runtime.
 
 Migrations run **when the container starts**, not when it is built — there is no
 database at build time. `docker-entrypoint.sh` waits up to a minute for the
 database, applies anything pending, then starts the server. Drizzle records what
 it has already run, so restarts and multiple replicas are safe.
 
-`GET /api/health` reports the app and the database, and is wired to the image's
-own `HEALTHCHECK`. Point Coolify at it.
+`GET /api/health` reports the app and the database. Point Coolify's health
+check at it.
 
-Required at runtime: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`. Optional:
-`STRIPE_SECRET_KEY`, the five `R2_*` values, and the five `SMTP_*` values.
-`R2_PUBLIC_URL` is also needed **at build time** (`--build-arg`), because it
-decides which remote host images may be loaded from.
+Required at runtime: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`.
+Optional: `STRIPE_SECRET_KEY`, the five `R2_*` values, and the five `SMTP_*`
+values. The container refuses to start without the first two.

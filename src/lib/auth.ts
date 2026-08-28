@@ -13,7 +13,9 @@ import * as authSchema from "@/db/auth-schema";
  */
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", schema: authSchema }),
-  secret: process.env.BETTER_AUTH_SECRET,
+  /* A placeholder keeps `next build` working where no secret is set;
+     the entrypoint refuses to start the server without a real one. */
+  secret: process.env.BETTER_AUTH_SECRET ?? "build-time-placeholder",
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
   emailAndPassword: {
     enabled: true,

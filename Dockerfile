@@ -33,21 +33,11 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Next.js reads `next.config.ts` at build time, and `R2_PUBLIC_URL` decides
-# which remote host images may be loaded from. Pass it in with
-# `--build-arg R2_PUBLIC_URL=https://cdn.example.com` so the allow-list is
-# correct; without it the config falls back to its default.
-ARG R2_PUBLIC_URL
-ENV R2_PUBLIC_URL=${R2_PUBLIC_URL}
-
+# The build needs no configuration of its own: nothing is fetched, and
+# every route that reads data is rendered per request. Coolify supplies
+# the real values at runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-
-# There is no database while the image is built. The client is only
-# constructed from this, never connected to: every route that reads data
-# is rendered per request. The real value is injected at runtime.
-ENV DATABASE_URL=postgres://build:build@127.0.0.1:5432/build
-ENV BETTER_AUTH_SECRET=build-only-secret-not-used-at-runtime
 
 RUN bun run build
 
@@ -72,9 +62,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-# `wget` is used by the health check below.
-RUN apk add --no-cache wget
-
 # Run as a non-root user. The bun image already ships `bun:bun` (1000:1000).
 RUN mkdir -p /app/.next/cache && chown -R bun:bun /app
 
@@ -95,9 +82,6 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 USER bun
 EXPOSE 3000
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:${PORT}/api/health || exit 1
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["bun", "server.js"]

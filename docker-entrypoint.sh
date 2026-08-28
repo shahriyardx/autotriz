@@ -11,6 +11,11 @@ if [ -z "$DATABASE_URL" ]; then
   exit 1
 fi
 
+if [ -z "$BETTER_AUTH_SECRET" ]; then
+  echo "BETTER_AUTH_SECRET is not set. Sessions cannot be signed without it." >&2
+  exit 1
+fi
+
 # Both the probe and the migration run from /app/migrate, which is where
 # the drizzle and postgres packages live.
 cd /app/migrate
