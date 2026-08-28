@@ -7,6 +7,7 @@ import { Markdown } from "@/components/markdown";
 import { Band, Button, Heading } from "@/components/ui";
 import { certifications } from "@/lib/site";
 import { getPage } from "@/lib/page-store";
+import { cn } from "@/lib/cn";
 
 export const metadata: Metadata = {
   title: "About",
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 type Centre = { name: string };
 type Resin = { code: string; name: string; body: string };
 type Pillar = { icon: string; title: string; body: string };
-type Section = { title: string; body: string };
+type Section = { title: string; accent?: string; body: string; image?: string };
 
 export default async function AboutPage() {
   const page = await getPage("about");
@@ -32,92 +33,116 @@ export default async function AboutPage() {
       <PageHero
         title={page.text("hero.title")}
         accent={page.text("hero.accent")}
-        subhead={page.text("hero.subhead")}
         lede={page.text("hero.lede")}
-        image={page.text("hero.image", "/photo/coating-application.webp")}
-        imageAlt="Ceramic coating being applied to paintwork"
+        image={page.text("hero.image", "/about/hero-beads.webp")}
+        imageAlt="Water beading on a coated surface"
+        className="min-h-[22rem] md:min-h-[30rem]"
       />
 
       {/* ================================================================
           PEOPLE
+          A plain two-column band: the laboratory on one side, who runs
+          it on the other, with the six R&D centres set out as a grid.
           ================================================================ */}
-      <Band tone="white">
-        <div className="shell grid gap-14 lg:grid-cols-12">
-          <div className="lg:col-span-6">
+      <section className="dark bg-card py-20 md:py-28">
+        <div className="shell grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <Reveal>
+            <div className="relative aspect-[4/3] w-full overflow-hidden">
+              <Image
+                src={page.text("people.image", "/about/people-lab.webp")}
+                alt="Chemists at work in the laboratory"
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+          </Reveal>
+
+          <Reveal delay={1}>
             <Heading align="left" accent={page.text("people.accent")} size="lg">
               {page.text("people.heading")}
             </Heading>
             <Markdown className="mt-7">{page.text("people.body")}</Markdown>
-          </div>
 
-          <div className="lg:col-span-5 lg:col-start-8">
-            <div className="border-t-2 border-primary bg-muted p-8">
-              <p className="label text-muted-foreground">R&amp;D centres</p>
-              <ul className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3">
-                {centres.map((centre) => (
-                  <li
-                    key={centre.name}
-                    className="flex items-center gap-3 text-sm text-foreground"
-                  >
-                    <span aria-hidden className="h-1 w-3 shrink-0 bg-primary" />
-                    {centre.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+            {centres.length ? (
+              <div className="mt-10">
+                <p className="label text-muted-foreground">R&amp;D centres</p>
+                <ul className="mt-5 grid grid-cols-2 gap-px border border-foreground/10 bg-foreground/10 sm:grid-cols-3">
+                  {centres.map((centre) => (
+                    <li
+                      key={centre.name}
+                      className="bg-card px-4 py-3.5 text-sm text-foreground/80"
+                    >
+                      {centre.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </Reveal>
         </div>
-      </Band>
+      </section>
 
       {/* ================================================================
-          THE CHEMISTRY
+          POLYSILAZANE
+          Copy on the left, the photograph bleeding off the right edge.
           ================================================================ */}
-      <Band tone="mist">
-        <div className="shell">
-          <Heading
-            accent={page.text("polysilazane.accent")}
-            rule
-            subhead={page.text("polysilazane.subhead")}
-          >
-            {page.text("polysilazane.heading")}
-          </Heading>
+      <section className="dark relative isolate overflow-hidden bg-background py-20 md:py-28">
+        <div className="absolute inset-y-0 right-0 hidden w-1/2 lg:block">
+          <Image
+            src={page.text("polysilazane.image", "/about/polysilazane.webp")}
+            alt="A coating being applied by hand"
+            fill
+            sizes="50vw"
+            className="object-cover"
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent"
+          />
+        </div>
 
-          <Markdown className="prose-center mt-10">
-            {page.text("polysilazane.body")}
-          </Markdown>
+        <div className="shell relative">
+          <div className="lg:max-w-xl">
+            <Heading align="left" accent={page.text("polysilazane.accent")} size="lg">
+              {page.text("polysilazane.heading")}
+            </Heading>
+            <p className="subhead mt-4">{page.text("polysilazane.subhead")}</p>
+            <Markdown className="mt-7">{page.text("polysilazane.body")}</Markdown>
 
-          <div className="mt-16 grid gap-6 md:grid-cols-2">
-            {resins.map((resin, i) => (
-              <Reveal key={resin.code} delay={i} className="bg-background p-8">
-                <p className="label text-primary">{resin.code}</p>
-                <h3 className="display mt-4 text-lg">{resin.name}</h3>
-                <p className="mt-4 leading-relaxed text-foreground/75">{resin.body}</p>
-              </Reveal>
-            ))}
+            <ul className="mt-8 space-y-4">
+              {resins.map((resin) => (
+                <li key={resin.code} className="border-l-2 border-primary pl-5">
+                  <p className="display-tight text-base text-foreground">
+                    {resin.name}{" "}
+                    <span className="text-primary">({resin.code})</span>
+                  </p>
+                  <p className="mt-1 text-sm text-foreground/60">{resin.body}</p>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-      </Band>
+      </section>
 
       {/* ================================================================
           PILLARS
           ================================================================ */}
-      <Band tone="dark">
+      <section className="dark bg-card py-16 md:py-24">
         <div className="shell">
-          <Heading tone="light" accent={page.text("pillars.accent")} rule>
-            {page.text("pillars.heading")}
-          </Heading>
-
-          <ul className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             {pillars.map((pillar, i) => (
               <Reveal as="li" key={pillar.title} delay={i} className="text-center">
                 {pillar.icon ? (
-                  <Image
-                    src={pillar.icon}
-                    alt=""
-                    width={563}
-                    height={550}
-                    className="mx-auto h-16 w-16 object-contain"
-                  />
+                  <span className="mx-auto grid size-16 place-items-center rounded-md border border-primary/60">
+                    <Image
+                      src={pillar.icon}
+                      alt=""
+                      width={563}
+                      height={550}
+                      className="h-8 w-8 object-contain"
+                    />
+                  </span>
                 ) : null}
                 <h3 className="display mt-6 text-base text-foreground">{pillar.title}</h3>
                 <p className="mt-4 text-sm leading-relaxed text-foreground/60">
@@ -127,29 +152,18 @@ export default async function AboutPage() {
             ))}
           </ul>
         </div>
-      </Band>
+      </section>
 
       {/* ================================================================
           THE COMPANY
+          Alternating halves, held inside the page's own measure rather
+          than running to the window edges.
           ================================================================ */}
       <Band tone="white">
-        <div className="shell">
-          <Heading accent={page.text("company.accent")} rule>
-            {page.text("company.heading")}
-          </Heading>
-
-          <div className="mt-16 space-y-14">
-            {company.map((section, i) => (
-              <Reveal key={section.title} delay={i % 2}>
-                <div className="grid gap-6 border-t border-border pt-8 md:grid-cols-12">
-                  <h3 className="display text-lg md:col-span-4">{section.title}</h3>
-                  <div className="md:col-span-8">
-                    <Markdown>{section.body}</Markdown>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+        <div className="shell space-y-16 md:space-y-24">
+          {company.map((section, i) => (
+            <SplitSection key={section.title} section={section} flip={i % 2 === 1} />
+          ))}
         </div>
       </Band>
 
@@ -186,5 +200,49 @@ export default async function AboutPage() {
 
       <Newsletter />
     </>
+  );
+}
+
+/* ------------------------------------------------------------------
+   One half copy, one half photograph. `flip` puts the picture on the
+   left instead, so a run of them alternates down the page.
+   ------------------------------------------------------------------ */
+
+function SplitSection({ section, flip }: { section: Section; flip: boolean }) {
+  return (
+    <Reveal>
+      <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+        <div
+          className={cn(
+            "relative aspect-[4/3] w-full overflow-hidden bg-muted",
+            flip ? "lg:order-1" : "lg:order-2",
+          )}
+        >
+          {section.image ? (
+            <Image
+              src={section.image}
+              alt=""
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
+            />
+          ) : null}
+        </div>
+
+        <div className={flip ? "lg:order-2" : "lg:order-1"}>
+          <h2 className="display text-[clamp(1.5rem,2.6vw,2rem)]">
+            {section.title}
+            {section.accent ? (
+              <>
+                <br />
+                <span className="accent">{section.accent}</span>
+              </>
+            ) : null}
+          </h2>
+          <span aria-hidden className="mt-6 block h-0.5 w-14 bg-primary" />
+          <Markdown className="mt-6">{section.body}</Markdown>
+        </div>
+      </div>
+    </Reveal>
   );
 }

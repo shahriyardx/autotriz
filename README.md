@@ -87,7 +87,7 @@ is resolved by `catalogue.ts` into the price to charge.
 ## Admin panel
 
 `/admin` — products, orders, categories, enquiries, staff. See
-[`docs/ADMIN.md`](docs/ADMIN.md) for the login and how it is wired.
+`src/app/admin` for the screens, `src/server/api/routers` for the data.
 
 ## Storefront
 
@@ -163,8 +163,6 @@ The registered entity is **Triz International Sdn. Bhd.**
 
 ## Not done yet
 
-See `docs/BUILD-PLAN.md`: the 3D hero, real prices, payment keys, and the 17
-language locales.
 
 ## Deploying
 

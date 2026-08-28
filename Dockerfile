@@ -11,7 +11,9 @@
 # database is reachable at deploy time, not at build time.
 ###############################################################################
 
-ARG BUN_VERSION=1.4
+# Pinned so a rebuild months from now produces the same image. The
+# lockfile is v2, which needs Bun 1.4 or newer to read.
+ARG BUN_VERSION=1.4.0
 
 # ---------------------------------------------------------------------------
 # 1. Dependencies — cached until the lockfile changes

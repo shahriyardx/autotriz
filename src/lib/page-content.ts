@@ -196,6 +196,7 @@ export const PAGES: PageDef[] = [
           { key: "people.heading", type: "text", label: "Heading" },
           { key: "people.accent", type: "text", label: "Heading accent (yellow)" },
           { key: "people.body", type: "markdown", label: "Body copy" },
+          { key: "people.image", type: "image", label: "Photograph" },
           {
             key: "people.centres",
             type: "list",
@@ -213,6 +214,7 @@ export const PAGES: PageDef[] = [
           { key: "polysilazane.accent", type: "text", label: "Heading accent (yellow)" },
           { key: "polysilazane.subhead", type: "text", label: "Standfirst" },
           { key: "polysilazane.body", type: "markdown", label: "Body copy" },
+          { key: "polysilazane.image", type: "image", label: "Photograph" },
           {
             key: "polysilazane.resins",
             type: "list",
@@ -260,7 +262,9 @@ export const PAGES: PageDef[] = [
             max: 6,
             fields: [
               { key: "title", type: "text", label: "Title" },
+              { key: "accent", type: "text", label: "Title accent (yellow)" },
               { key: "body", type: "markdown", label: "Body copy" },
+              { key: "image", type: "image", label: "Photograph" },
             ],
           },
         ],
@@ -451,7 +455,7 @@ export const PAGE_DEFAULTS: Record<string, Record<string, unknown>> = {
       accent: "our business",
       subhead: "Nano ceramic coatings and specialty chemicals",
       lede: "AUTOTRIZ is a global leading producer of advanced high-quality and high-purity nano ceramic coatings and specialized chemicals.",
-      image: "/photo/coating-application.webp",
+      image: "/about/hero-beads.webp",
     },
     people: {
       heading: "People behind the",
@@ -465,6 +469,7 @@ export const PAGE_DEFAULTS: Record<string, Record<string, unknown>> = {
         { name: "France" },
         { name: "United States" },
       ],
+      image: "/about/people-lab.webp",
     },
     polysilazane: {
       heading: "Polysilazane",
@@ -483,6 +488,7 @@ export const PAGE_DEFAULTS: Record<string, Record<string, unknown>> = {
           body: "Hydrophilic coatings. A glass-like film for surfaces where sheeting matters more than beading.",
         },
       ],
+      image: "/about/polysilazane.webp",
     },
     pillars: {
       heading: "What sets us",
@@ -515,19 +521,27 @@ export const PAGE_DEFAULTS: Record<string, Record<string, unknown>> = {
       accent: "company",
       items: [
         {
-          title: "World leader in nano technology",
+          title: "World's leader in",
+          accent: "nano technology",
+          image: "/about/nano-technology.webp",
           body: "AUTOTRIZ is a leading name in nano ceramic surface protection, with a series of ceramic coating and paint protection film products, each formulated for a specific surface. Our formulas are designed for paint, vinyl, fabric, glass, leather and more. AUTOTRIZ coatings bond at a nano-molecular level, filling every pore and creating a permanent, protective surface. Our VERTEK films were developed with the same patented polysilazane technology.",
         },
         {
-          title: "Safety and regulations",
+          title: "Safety &",
+          accent: "regulations",
+          image: "/about/safety-regulations.webp",
           body: "We are committed to supplying products and services of the highest quality and to meeting our customers' requirements. The cornerstone is an effective quality management system that meets ISO 9001:2015, complies with applicable statutory and regulatory requirements, and involves every level of the organisation.",
         },
         {
-          title: "State-of-the-art production",
+          title: "State-of-art",
+          accent: "production facilities",
+          image: "/about/production-line.webp",
           body: "We manufacture our own products and are organised to meet growing demand. With extensive raw materials, technical know-how and advanced technology from around the globe, our formulas are developed and tested in-house — which is also why we can supply OEM customers and customise formulations for other brands.\n\nWe work alongside scientists and detailing professionals, so every product is formulated, developed, tested and manufactured in our own facilities.",
         },
         {
-          title: "Network and business",
+          title: "Network &",
+          accent: "business",
+          image: "/about/network-business.webp",
           body: "We offer top-quality products, outstanding service and technical support to build long-term relationships with the workshops, detailers and car owners we serve, backed by a dedicated customer service desk and our social channels.",
         },
       ],

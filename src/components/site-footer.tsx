@@ -103,11 +103,14 @@ export function SiteFooter({ shopItems }: { shopItems: NavItem[] }) {
       </div>
 
       <div className="bg-primary text-primary-foreground">
-        <div className="shell flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between">
-          <p className="label">
-            © {new Date().getFullYear()} {site.registered} — {site.tagline}
+        {/* On a narrow screen the legal links stack as a list rather
+            than wrapping into a ragged block. */}
+        <div className="shell flex flex-col gap-5 py-5 md:flex-row md:items-center md:justify-between md:gap-8 md:py-4">
+          <p className="label leading-relaxed">
+            © {new Date().getFullYear()} {site.registered}
+            <span className="hidden sm:inline"> — {site.tagline}</span>
           </p>
-          <ul className="flex flex-wrap gap-x-7 gap-y-2">
+          <ul className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:gap-x-7 md:gap-y-2">
             {footerLegal.map((l) => (
               <li key={l.href}>
                 <Link

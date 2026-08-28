@@ -21,4 +21,3 @@ compose.yml
 Dockerfile
 .dockerignore
 README.md
-docs
