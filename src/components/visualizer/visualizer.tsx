@@ -110,19 +110,8 @@ export function Visualizer() {
           ============================================================ */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_58%_48%_at_50%_46%,#1c2026_0%,#0d1013_46%,#040405_100%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_85%_65%_at_50%_78%,#1b1f24_0%,#0e1114_38%,#050506_78%)]"
       />
-      <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
-        <Image
-          src="/brand/autotriz-wordmark-light.png"
-          alt=""
-          width={1600}
-          height={420}
-          priority
-          className="w-[min(74vw,60rem)] -translate-y-[14%] opacity-[0.045] mix-blend-screen"
-        />
-      </div>
-
       {/* The car itself. */}
       <CarScene
         car={car}
@@ -149,14 +138,18 @@ export function Visualizer() {
             className="pointer-events-auto block shrink-0 transition-opacity hover:opacity-70"
             aria-label="AUTOTRIZ home"
           >
-            <Image
-              src="/brand/autotriz-wordmark-light.png"
-              alt="AUTOTRIZ"
-              width={640}
-              height={168}
-              priority
-              className="h-8 w-auto md:h-10"
-            />
+            {/* The file carries the tagline under the name; only the
+                name belongs up here, so the rest is cropped away. */}
+            <span className="block h-[1.48rem] w-40 overflow-hidden md:h-[1.78rem] md:w-48">
+              <Image
+                src="/brand/autotriz-wordmark.png"
+                alt="AUTOTRIZ"
+                width={3339}
+                height={729}
+                priority
+                className="h-auto w-full"
+              />
+            </span>
           </Link>
 
           <div className="pointer-events-auto flex gap-2">

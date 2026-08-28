@@ -198,11 +198,10 @@ function Studio() {
         scale={[9, 3, 1]}
       />
 
-      {/* A little of the brand's yellow, caught in the flank. */}
+      {/* A soft front fill, so the nose is not left in shadow. */}
       <Lightformer
         form="ring"
-        color="#f5c400"
-        intensity={2.2}
+        intensity={1.6}
         position={[-5, 2, 7]}
         scale={3.5}
       />
@@ -220,7 +219,7 @@ function Studio() {
    ------------------------------------------------------------------ */
 
 function Floor() {
-  const logo = useTexture("/brand/autotriz-wordmark-light.png");
+  const logo = useTexture("/brand/autotriz-wordmark.png");
 
   const map = useMemo(() => {
     const source = logo.image as HTMLImageElement;
@@ -273,13 +272,51 @@ function Floor() {
     return texture;
   }, [logo]);
 
+  /* The floor has to stop somewhere, and a plane that stops leaves a
+     horizon. Fading it away instead lets it run out into the dark, so
+     there is no line to see. Its own mask, on its own scale — the mark
+     above repeats, this must not. */
+  const fade = useMemo(() => {
+    const size = 512;
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    const gradient = ctx.createRadialGradient(
+      size / 2,
+      size / 2,
+      0,
+      size / 2,
+      size / 2,
+      size / 2,
+    );
+    gradient.addColorStop(0, "#ffffff");
+    gradient.addColorStop(0.16, "#ffffff");
+    gradient.addColorStop(0.34, "#6a6a6a");
+    gradient.addColorStop(0.5, "#000000");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
+    return texture;
+  }, []);
+
   useEffect(() => () => map?.dispose(), [map]);
+  useEffect(() => () => fade?.dispose(), [fade]);
 
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
       <planeGeometry args={[64, 64]} />
       <meshStandardMaterial
         map={map}
+        alphaMap={fade}
+        transparent
+        depthWrite={false}
         roughness={0.8}
         metalness={0.05}
         envMapIntensity={0.35}
@@ -292,8 +329,10 @@ function Floor() {
    reflection — in a studio you can see the light itself. */
 function Softbox() {
   return (
-    <mesh position={[0, 4.4, 0.6]} rotation={[Math.PI / 2, 0, 0]}>
-      <planeGeometry args={[9.5, 5.5]} />
+    <mesh position={[0, 3.9, 0.8]} rotation={[Math.PI / 2, 0, 0]}>
+      <planeGeometry args={[13, 7.5]} />
+      {/* Unlit and outside tone mapping, so it stays the brightest
+          white on screen instead of being rolled off with the rest. */}
       <meshBasicMaterial color="#ffffff" toneMapped={false} fog={false} />
     </mesh>
   );
@@ -345,10 +384,6 @@ export function CarScene({ car, finish, colour, spinning, onSnapshotReady }: Car
           toneMappingExposure: 1.22,
         }}
       >
-        {/* Fades the floor into the dark rather than ending it at a
-            hard horizon. */}
-        <fog attach="fog" args={["#050506", 9, 26]} />
-
         <Suspense fallback={null}>
           <Studio />
           <Softbox />
