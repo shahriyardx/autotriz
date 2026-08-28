@@ -374,19 +374,6 @@ export type CarModel = {
 
 export const CARS: CarModel[] = [
   {
-    key: "supra",
-    name: "Supra MK IV",
-    note: "Nineties icon",
-    file: "/visualizer/supra.glb",
-    credit:
-      'Based on "Toyota Supra MK IV (1994)" by Martin Trafas on Sketchfab, CC BY 4.0',
-    paint: ["TOYOTA_SUPRA_CAR_PAINT"],
-    camera: { position: [4.4, 1.5, -5.2], target: [0, 1.05, 0] },
-    distance: { min: 3.4, max: 10.5 },
-    forward: -1,
-    length: 4.514,
-  },
-  {
     key: "huracan",
     name: "Huracán",
     note: "Mid-engine supercar",
@@ -398,6 +385,19 @@ export const CARS: CarModel[] = [
     distance: { min: 3.2, max: 10 },
     forward: -1,
     length: 4.46,
+  },
+  {
+    key: "supra",
+    name: "Supra MK IV",
+    note: "Nineties icon",
+    file: "/visualizer/supra.glb",
+    credit:
+      'Based on "Toyota Supra MK IV (1994)" by Martin Trafas on Sketchfab, CC BY 4.0',
+    paint: ["TOYOTA_SUPRA_CAR_PAINT"],
+    camera: { position: [4.4, 1.5, -5.2], target: [0, 1.05, 0] },
+    distance: { min: 3.4, max: 10.5 },
+    forward: -1,
+    length: 4.514,
   },
   {
     key: "coupe",
