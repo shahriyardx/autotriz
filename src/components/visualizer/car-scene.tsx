@@ -56,13 +56,22 @@ function Car({ car, finish, colour }: { car: CarModel; finish: Finish; colour: s
   const paint = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color(colour).convertSRGBToLinear(),
-        metalness: finish.metalness,
-        roughness: finish.roughness,
-        clearcoat: finish.clearcoat,
-        clearcoatRoughness: finish.clearcoatRoughness,
-        envMapIntensity: finish.envIntensity,
-      }),
+      color: new THREE.Color(colour).convertSRGBToLinear(),
+      metalness: finish.metalness,
+      roughness: finish.roughness,
+      clearcoat: finish.clearcoat,
+      clearcoatRoughness: finish.clearcoatRoughness,
+      envMapIntensity: finish.envIntensity,
+
+      // The tricks, each off by default.
+      sheen: finish.sheen ?? 0,
+      sheenRoughness: finish.sheenRoughness ?? 0.5,
+      sheenColor: new THREE.Color("#ffffff"),
+      iridescence: finish.iridescence ?? 0,
+      iridescenceIOR: 2,
+      iridescenceThicknessRange: finish.iridescenceThickness ?? [100, 400],
+      anisotropy: finish.anisotropy ?? 0,
+    }),
     [colour, finish],
   );
 

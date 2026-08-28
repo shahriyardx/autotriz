@@ -8,10 +8,15 @@
 
 /** One coating, described the way the renderer needs it.
  *
- *  `clearcoat` is the lacquer layer sitting on the paint — a ceramic
- *  coating is a second, harder one on top, so gloss finishes push it
- *  to 1 with almost no roughness. Matte and satin keep the layer but
- *  scatter it, which is what kills the mirror reflection. */
+ *  `clearcoat` is the lacquer sitting on the paint — a ceramic coating
+ *  is a second, harder one on top, so gloss finishes push it to 1 with
+ *  almost no roughness. Matte and satin keep the layer but scatter it,
+ *  which is what kills the mirror reflection.
+ *
+ *  The rest are the optional tricks: `sheen` is the soft halo of a
+ *  pearl, `iridescence` is a thin film that shifts colour with the
+ *  angle you look from, and `pattern` swaps the flat colour for a
+ *  woven surface. */
 export type Finish = {
   key: string;
   name: string;
@@ -23,6 +28,15 @@ export type Finish = {
   clearcoatRoughness: number;
   /** How hard the studio reflects in the paint. */
   envIntensity: number;
+  /** Pearl halo, 0 to 1. */
+  sheen?: number;
+  sheenRoughness?: number;
+  /** Thin-film colour shift, 0 to 1, and how thick the film is in
+   *  nanometres — thicker swings further round the spectrum. */
+  iridescence?: number;
+  iridescenceThickness?: [number, number];
+  /** Brushed, directional highlight. */
+  anisotropy?: number;
 };
 
 export const FINISHES: Finish[] = [
@@ -63,6 +77,73 @@ export const FINISHES: Finish[] = [
     envIntensity: 0.9,
   },
   {
+    key: "pearl",
+    name: "Pearl Lustre",
+    short: "Pearl top coat",
+    blurb:
+      "Fine mica in the top layer throws a soft white halo across the panel, so the colour lifts as the light moves round it.",
+    metalness: 0.3,
+    roughness: 0.38,
+    clearcoat: 1,
+    clearcoatRoughness: 0.05,
+    envIntensity: 1.15,
+    sheen: 1,
+    sheenRoughness: 0.3,
+  },
+  {
+    key: "metallic",
+    name: "Metallic Flake",
+    short: "Metallic",
+    blurb:
+      "Aluminium flake suspended in the base coat. The panel goes bright where it faces the light and drops away sharply where it turns.",
+    metalness: 0.96,
+    roughness: 0.26,
+    clearcoat: 1,
+    clearcoatRoughness: 0.03,
+    envIntensity: 1.35,
+  },
+  {
+    key: "flip",
+    name: "Colour Flip",
+    short: "Two-tone",
+    blurb:
+      "A thin film over the paint that reads one colour head on and another down the flank. Subtle from a distance, obvious as you walk past.",
+    metalness: 0.6,
+    roughness: 0.26,
+    clearcoat: 1,
+    clearcoatRoughness: 0.03,
+    envIntensity: 1.25,
+    iridescence: 1,
+    iridescenceThickness: [260, 560],
+  },
+  {
+    key: "iridescent",
+    name: "Iridescent",
+    short: "Full spectrum",
+    blurb:
+      "The same film, much thicker. The whole spectrum runs across the bodywork as it turns — a wrap finish, not a coating.",
+    metalness: 0.55,
+    roughness: 0.22,
+    clearcoat: 1,
+    clearcoatRoughness: 0.02,
+    envIntensity: 1.3,
+    iridescence: 1,
+    iridescenceThickness: [100, 1100],
+  },
+  {
+    key: "brushed",
+    name: "Brushed Metal",
+    short: "Anodised",
+    blurb:
+      "Grain running the length of the panel, so the highlight smears into a line instead of a point. An anodised wrap look.",
+    metalness: 0.95,
+    roughness: 0.4,
+    clearcoat: 0.7,
+    clearcoatRoughness: 0.25,
+    envIntensity: 1.2,
+    anisotropy: 0.9,
+  },
+  {
     key: "ppf-gloss",
     name: "PPF Gloss",
     short: "Paint protection film",
@@ -94,18 +175,174 @@ export const FINISHES: Finish[] = [
 
 export type PaintColour = { key: string; name: string; hex: string };
 
-export const COLOURS: PaintColour[] = [
-  { key: "arctic-white", name: "Arctic White", hex: "#e9ebec" },
-  { key: "pearl-silver", name: "Pearl Silver", hex: "#b9bfc5" },
-  { key: "gunmetal", name: "Gunmetal", hex: "#4a5057" },
-  { key: "jet-black", name: "Jet Black", hex: "#0c0e10" },
-  { key: "scarlet", name: "Scarlet Red", hex: "#b3121f" },
-  { key: "deep-blue", name: "Deep Ocean", hex: "#123a72" },
-  { key: "racing-green", name: "Racing Green", hex: "#13402a" },
-  { key: "bronze", name: "Liquid Bronze", hex: "#7d5a30" },
-  { key: "sunburst", name: "Sunburst", hex: "#e0a90b" },
-  { key: "sand", name: "Desert Sand", hex: "#b9a483" },
+/** A family of shades, the way a wrap catalogue is laid out: pick the
+ *  colour you want, then the exact shade within it. */
+export type ColourFamily = {
+  key: string;
+  name: string;
+  /** The chip that stands for the family in the picker. */
+  swatch: string;
+  shades: PaintColour[];
+};
+
+export const COLOUR_FAMILIES: ColourFamily[] = [
+  {
+    key: "white",
+    name: "White",
+    swatch: "#e9ebec",
+    shades: [
+      { key: "arctic-white", name: "Arctic White", hex: "#e9ebec" },
+      { key: "pearl-white", name: "Pearl White", hex: "#f2f1ec" },
+      { key: "alpine", name: "Alpine", hex: "#dcdfe1" },
+      { key: "ivory", name: "Ivory", hex: "#e6e0d2" },
+      { key: "chalk", name: "Chalk", hex: "#cfd0cb" },
+    ],
+  },
+  {
+    key: "silver",
+    name: "Silver",
+    swatch: "#b9bfc5",
+    shades: [
+      { key: "pearl-silver", name: "Pearl Silver", hex: "#b9bfc5" },
+      { key: "liquid-silver", name: "Liquid Silver", hex: "#c9ced2" },
+      { key: "titanium", name: "Titanium", hex: "#9ea4a8" },
+      { key: "platinum", name: "Platinum", hex: "#d2d6d6" },
+      { key: "frost", name: "Frost", hex: "#aebac2" },
+    ],
+  },
+  {
+    key: "grey",
+    name: "Grey",
+    swatch: "#7e848a",
+    shades: [
+      { key: "nardo-grey", name: "Nardo Grey", hex: "#7e848a" },
+      { key: "cement", name: "Cement", hex: "#8d8b84" },
+      { key: "slate", name: "Slate", hex: "#5d666e" },
+      { key: "graphite", name: "Graphite", hex: "#4a5057" },
+      { key: "ash", name: "Ash", hex: "#6b6f70" },
+    ],
+  },
+  {
+    key: "black",
+    name: "Black",
+    swatch: "#0c0e10",
+    shades: [
+      { key: "jet-black", name: "Jet Black", hex: "#0c0e10" },
+      { key: "obsidian", name: "Obsidian", hex: "#15181c" },
+      { key: "midnight", name: "Midnight", hex: "#121820" },
+      { key: "onyx", name: "Onyx", hex: "#1c1c1e" },
+      { key: "anthracite", name: "Anthracite", hex: "#2a2e32" },
+    ],
+  },
+  {
+    key: "red",
+    name: "Red",
+    swatch: "#b3121f",
+    shades: [
+      { key: "scarlet", name: "Scarlet Red", hex: "#b3121f" },
+      { key: "rosso", name: "Rosso", hex: "#c8102e" },
+      { key: "candy-red", name: "Candy Red", hex: "#8f0713" },
+      { key: "wine", name: "Wine", hex: "#5d1220" },
+      { key: "cherry", name: "Cherry", hex: "#d4293a" },
+    ],
+  },
+  {
+    key: "orange",
+    name: "Orange",
+    swatch: "#c9520d",
+    shades: [
+      { key: "burnt-orange", name: "Burnt Orange", hex: "#c9520d" },
+      { key: "sunset", name: "Sunset", hex: "#e2661a" },
+      { key: "copper", name: "Copper", hex: "#a45325" },
+      { key: "amber", name: "Amber", hex: "#d8791b" },
+      { key: "coral", name: "Coral", hex: "#d4604b" },
+    ],
+  },
+  {
+    key: "yellow",
+    name: "Yellow",
+    swatch: "#e0a90b",
+    shades: [
+      { key: "sunburst", name: "Sunburst", hex: "#e0a90b" },
+      { key: "racing-yellow", name: "Racing Yellow", hex: "#f2c400" },
+      { key: "lemon", name: "Lemon", hex: "#e8d64a" },
+      { key: "mustard", name: "Mustard", hex: "#c0930f" },
+      { key: "sand", name: "Desert Sand", hex: "#b9a483" },
+    ],
+  },
+  {
+    key: "gold",
+    name: "Gold",
+    swatch: "#7d5a30",
+    shades: [
+      { key: "bronze", name: "Liquid Bronze", hex: "#7d5a30" },
+      { key: "champagne", name: "Champagne", hex: "#c2a878" },
+      { key: "antique-gold", name: "Antique Gold", hex: "#9a7b32" },
+      { key: "brass", name: "Brass", hex: "#8e6f3a" },
+      { key: "khaki", name: "Khaki", hex: "#6f6547" },
+    ],
+  },
+  {
+    key: "green",
+    name: "Green",
+    swatch: "#13402a",
+    shades: [
+      { key: "racing-green", name: "Racing Green", hex: "#13402a" },
+      { key: "emerald", name: "Emerald", hex: "#12664a" },
+      { key: "forest", name: "Forest", hex: "#1f4a2c" },
+      { key: "olive", name: "Olive", hex: "#4d5230" },
+      { key: "mint", name: "Mint", hex: "#8fbfa6" },
+    ],
+  },
+  {
+    key: "blue",
+    name: "Blue",
+    swatch: "#123a72",
+    shades: [
+      { key: "deep-ocean", name: "Deep Ocean", hex: "#123a72" },
+      { key: "sapphire", name: "Sapphire", hex: "#1b4f9c" },
+      { key: "cobalt", name: "Cobalt", hex: "#1160c4" },
+      { key: "navy", name: "Navy", hex: "#101d3d" },
+      { key: "ice-blue", name: "Ice Blue", hex: "#8fb3ce" },
+    ],
+  },
+  {
+    key: "purple",
+    name: "Purple",
+    swatch: "#4b2b8f",
+    shades: [
+      { key: "violet", name: "Violet", hex: "#4b2b8f" },
+      { key: "amethyst", name: "Amethyst", hex: "#6b46b3" },
+      { key: "indigo", name: "Indigo", hex: "#2e2160" },
+      { key: "plum", name: "Plum", hex: "#54284c" },
+      { key: "lavender", name: "Lavender", hex: "#a793cc" },
+    ],
+  },
+  {
+    key: "pink",
+    name: "Pink",
+    swatch: "#c2708a",
+    shades: [
+      { key: "blush", name: "Blush Pink", hex: "#c2708a" },
+      { key: "rose", name: "Rose", hex: "#c85f76" },
+      { key: "magenta", name: "Magenta", hex: "#a81f63" },
+      { key: "fuchsia", name: "Fuchsia", hex: "#d33e94" },
+      { key: "salmon", name: "Salmon", hex: "#dd8f83" },
+    ],
+  },
 ];
+
+/** Every shade in one list, for looking one up by key. */
+export const COLOURS: PaintColour[] = COLOUR_FAMILIES.flatMap((f) => f.shades);
+
+export function familyOf(colourKey: string): ColourFamily {
+  return (
+    COLOUR_FAMILIES.find((f) => f.shades.some((s) => s.key === colourKey)) ??
+    COLOUR_FAMILIES[0]
+  );
+}
+
+
 
 /* ------------------------------------------------------------------
    CARS

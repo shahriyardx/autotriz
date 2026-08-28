@@ -15,7 +15,15 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { CARS, COLOURS, DEFAULT_COLOUR, DEFAULT_FINISH, FINISHES } from "@/lib/visualizer";
+import {
+  CARS,
+  COLOURS,
+  COLOUR_FAMILIES,
+  DEFAULT_COLOUR,
+  DEFAULT_FINISH,
+  FINISHES,
+  familyOf,
+} from "@/lib/visualizer";
 
 /* ==================================================================
    THE HUD
@@ -48,6 +56,7 @@ export function Visualizer() {
   const car = CARS[carIndex] ?? CARS[0];
   const finish = FINISHES.find((f) => f.key === finishKey) ?? DEFAULT_FINISH;
   const colour = COLOURS.find((c) => c.key === colourKey) ?? DEFAULT_COLOUR;
+  const family = familyOf(colour.key);
 
   const stage = useRef<HTMLDivElement>(null);
   const snapshot = useRef<(() => string) | null>(null);
@@ -124,7 +133,7 @@ export function Visualizer() {
       {/* Darkened corners, so the eye lands on the car. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,transparent_35%,rgba(0,0,0,0.55)_100%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_75%_at_50%_52%,transparent_58%,rgba(0,0,0,0.32)_100%)]"
       />
 
       {/* ============================================================
@@ -210,11 +219,37 @@ export function Visualizer() {
               </Tool>
             </div>
 
+            {/* Colour, the way a wrap book is laid out: the family
+                first, then the exact shade inside it. */}
             <p className="label mt-5 text-white/40">
-              Paint <span className="ml-2 text-white/70">{colour.name}</span>
+              Paint{" "}
+              <span className="ml-2 text-white/70">
+                {colour.name} · {family.name}
+              </span>
             </p>
+
             <div className="mt-2.5 flex flex-wrap gap-2">
-              {COLOURS.map((item) => (
+              {COLOUR_FAMILIES.map((item) => (
+                <button
+                  key={item.key}
+                  type="button"
+                  title={item.name}
+                  aria-label={item.name}
+                  aria-pressed={item.key === family.key}
+                  onClick={() => setColourKey(item.shades[0].key)}
+                  className={cn(
+                    "size-8 rounded-full border transition-transform md:size-9",
+                    item.key === family.key
+                      ? "scale-110 border-primary ring-2 ring-primary/40"
+                      : "border-white/25 hover:scale-105 hover:border-white/60",
+                  )}
+                  style={{ backgroundColor: item.swatch }}
+                />
+              ))}
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2 border-t border-white/10 pt-3">
+              {family.shades.map((item) => (
                 <button
                   key={item.key}
                   type="button"
@@ -223,10 +258,10 @@ export function Visualizer() {
                   aria-pressed={item.key === colour.key}
                   onClick={() => setColourKey(item.key)}
                   className={cn(
-                    "size-8 rounded-full border transition-transform md:size-9",
+                    "size-7 border transition-transform",
                     item.key === colour.key
                       ? "scale-110 border-primary ring-2 ring-primary/40"
-                      : "border-white/25 hover:scale-105 hover:border-white/60",
+                      : "border-white/20 hover:scale-105 hover:border-white/60",
                   )}
                   style={{ backgroundColor: item.hex }}
                 />
