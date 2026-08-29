@@ -16,7 +16,9 @@ import * as authSchema from "@/db/auth-schema";
    which is why a wrong value does not fail loudly — it just rejects
    sign-in and sign-out with "Invalid origin". The entrypoint refuses to
    start a container without it. */
-const baseURL = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
+const DEV_ORIGIN = "http://localhost:3000";
+
+const baseURL = process.env.BETTER_AUTH_URL ?? DEV_ORIGIN;
 
 /* Anything else allowed to talk to the auth endpoints — a staging
    domain, a preview URL — as a comma-separated list. */
@@ -25,13 +27,18 @@ const extraOrigins = (process.env.BETTER_AUTH_TRUSTED_ORIGINS ?? "")
   .map((origin) => origin.trim())
   .filter(Boolean);
 
+/* The site's own address is always trusted, and so is the dev server —
+   otherwise a build pointed at the live domain rejects every request
+   made while working locally. */
+const trustedOrigins = [...new Set([baseURL, DEV_ORIGIN, ...extraOrigins])];
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", schema: authSchema }),
   /* A placeholder keeps `next build` working where no secret is set;
      the entrypoint refuses to start the server without a real one. */
   secret: process.env.BETTER_AUTH_SECRET ?? "build-time-placeholder",
   baseURL,
-  trustedOrigins: [baseURL, ...extraOrigins],
+  trustedOrigins,
   emailAndPassword: {
     enabled: true,
     // No public sign-up route, so nothing to verify by email yet.
