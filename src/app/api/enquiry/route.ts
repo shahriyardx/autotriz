@@ -17,7 +17,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Malformed request" }, { status: 400 });
   }
 
-  const required = ["firstName", "lastName", "email", "country", "message"];
+  /* Two kinds of enquiry arrive here. The contact form asks for a name
+     and a country and can insist on them; the newsletter box is a
+     single field, and demanding the rest of a contact form from it
+     would reject every sign-up. */
+  const topic = typeof body.topic === "string" ? body.topic : "general";
+  const required =
+    topic === "newsletter"
+      ? ["email"]
+      : ["firstName", "lastName", "email", "country", "message"];
+
   const missing = required.filter(
     (field) => typeof body[field] !== "string" || !String(body[field]).trim(),
   );
@@ -45,7 +54,7 @@ export async function POST(request: Request) {
   };
 
   await db.insert(enquiries).values({
-    topic: typeof body.topic === "string" ? body.topic : "general",
+    topic,
     firstName: text("firstName"),
     lastName: text("lastName"),
     email,
