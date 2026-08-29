@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 type Reason = { t: string; d: string };
 
 export default async function ServicesPage() {
-  const page = await getPage("services");
+  const page = getPage("services");
   const reasons = page.list<Reason>("reasons.items");
 
   return (

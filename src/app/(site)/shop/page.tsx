@@ -19,11 +19,11 @@ export const metadata: Metadata = {
 export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
   const input = parseShopParams(await searchParams);
 
-  const [results, facets, page] = await Promise.all([
+  const [results, facets] = await Promise.all([
     trpc.shop.search(input),
     trpc.shop.facets(),
-    getPage("shop"),
   ]);
+  const page = getPage("shop");
 
   return (
     <>

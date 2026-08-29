@@ -28,7 +28,8 @@ export default async function ContactPage({
 }: {
   searchParams: Promise<{ topic?: string }>;
 }) {
-  const [page, shop] = await Promise.all([getPage("contact"), getShopSettings()]);
+  const page = getPage("contact");
+  const shop = await getShopSettings();
   const { topic: raw } = await searchParams;
   const topic: Topic = topics.includes(raw as Topic) ? (raw as Topic) : "general";
 

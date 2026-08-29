@@ -16,10 +16,8 @@ type Benefit = { name: string; body: string };
 type Cert = { name: string; note: string };
 
 export default async function HomePage() {
-  const [categories, page] = await Promise.all([
-    listCategories({ topLevelOnly: true }),
-    getPage("home"),
-  ]);
+  const categories = await listCategories({ topLevelOnly: true });
+  const page = getPage("home");
 
   const heroVideo = page.text("hero.video");
   const heroPoster = page.text("hero.image", "/video/hero-poster.webp");

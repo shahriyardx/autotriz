@@ -21,7 +21,6 @@ export const PERMISSIONS = [
   { key: "enquiries.edit", group: "Marketing", label: "Handle enquiries", implies: ["enquiries.view"] },
   { key: "staff.view", group: "Administration", label: "See the staff list" },
   { key: "staff.manage", group: "Administration", label: "Invite staff and set permissions", implies: ["staff.view"] },
-  { key: "pages.edit", group: "Content", label: "Edit page content" },
   { key: "settings.edit", group: "Administration", label: "Change shop settings" },
 ] as const;
 
@@ -81,7 +80,6 @@ export const ROLE_PRESETS: Record<Role, Permission[]> = {
     "discounts.edit",
     "enquiries.view",
     "enquiries.edit",
-    "pages.edit",
   ],
   staff: ["products.view", "orders.view", "enquiries.view", "media.view"],
 };

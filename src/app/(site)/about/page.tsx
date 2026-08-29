@@ -21,7 +21,7 @@ type Pillar = { icon: string; title: string; body: string };
 type Section = { title: string; accent?: string; body: string; image?: string };
 
 export default async function AboutPage() {
-  const page = await getPage("about");
+  const page = getPage("about");
 
   const centres = page.list<Centre>("people.centres");
   const resins = page.list<Resin>("polysilazane.resins");

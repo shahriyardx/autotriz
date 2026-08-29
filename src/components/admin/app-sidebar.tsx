@@ -55,7 +55,6 @@ const nav = [
       { title: "Categories", url: "/admin/categories", permission: "categories.edit" as Permission },
     ],
   },
-  { title: "Pages", url: "/admin/pages", icon: FileText, permission: "pages.edit" as Permission },
   { title: "Media", url: "/admin/media", icon: Images, permission: "media.view" as Permission },
   { title: "Discounts", url: "/admin/discounts", icon: Ticket, permission: "discounts.edit" as Permission },
   { title: "Enquiries", url: "/admin/enquiries", icon: Inbox, permission: "enquiries.view" as Permission },

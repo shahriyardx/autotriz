@@ -1,28 +1,18 @@
-import "server-only";
-import { eq } from "drizzle-orm";
-import { db } from "@/db";
-import { pageContent } from "@/db/schema";
-import { PAGE_DEFAULTS, mergeContent, pick } from "@/lib/page-content";
+import { PAGE_CONTENT, pick } from "@/lib/page-content";
 
-/* The storefront's read side. Stored copy wins; anything blank falls
-   back to the wording the site shipped with, so a page is never empty. */
+/* The storefront's read side.
+   
+   This used to merge copy stored in the database over the shipped
+   wording. The admin form that wrote that copy has been removed, so
+   the shipped wording is all there is — which means no query, no
+   `server-only`, and nothing to await. */
 
 export type PageBag = Record<string, unknown>;
 
-export async function getPageContent(page: string): Promise<PageBag> {
-  const defaults = PAGE_DEFAULTS[page] ?? {};
-  const [row] = await db
-    .select({ content: pageContent.content })
-    .from(pageContent)
-    .where(eq(pageContent.page, page))
-    .limit(1);
-
-  return mergeContent(defaults, row?.content);
-}
-
 /** A reader bound to one page, so components can ask for `hero.title`. */
-export async function getPage(page: string) {
-  const content = await getPageContent(page);
+export function getPage(page: string) {
+  const content = PAGE_CONTENT[page] ?? {};
+
   return {
     content,
     text: (path: string, fallback = "") => pick<string>(content, path, fallback),
