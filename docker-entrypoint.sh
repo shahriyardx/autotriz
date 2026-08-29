@@ -16,6 +16,15 @@ if [ -z "$BETTER_AUTH_SECRET" ]; then
   exit 1
 fi
 
+# Without this, Better Auth falls back to localhost and then rejects
+# every request from the real domain as an invalid origin. Sign-in and
+# sign-out both stop working, and neither says why.
+if [ -z "$BETTER_AUTH_URL" ]; then
+  echo "BETTER_AUTH_URL is not set. Set it to the site's public address," >&2
+  echo "for example https://autotriz.example.com — no trailing slash." >&2
+  exit 1
+fi
+
 # Both the probe and the migration run from /app/migrate, which is where
 # the drizzle and postgres packages live.
 cd /app/migrate
