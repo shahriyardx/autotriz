@@ -13,7 +13,7 @@
  */
 import { eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
-import { categories, productCategories, products } from "@/db/schema";
+import { categories, productCategories, productImages, products } from "@/db/schema";
 
 type Demo = {
   slug: string;
@@ -305,6 +305,17 @@ async function run() {
     // The primary category is mirrored into the join table, as the
     // admin does when a product is saved there.
     await db.insert(productCategories).values({ productId: created.id, categoryId: category });
+
+    /* `products.image` is only the main shot the storefront reads. The
+       admin's image manager reads `product_images`, so a product
+       without a row here looks pictureless the moment it is opened for
+       editing even though the listing shows a thumbnail. */
+    await db.insert(productImages).values({
+      productId: created.id,
+      url: image(demo.slug),
+      alt: demo.name,
+      sortOrder: 0,
+    });
     added += 1;
   }
 
