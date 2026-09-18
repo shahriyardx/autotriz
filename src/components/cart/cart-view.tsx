@@ -106,13 +106,13 @@ export function CartView() {
 
           <Link
               href="/checkout"
-              className="label group relative mt-8 flex w-full items-center justify-center gap-3 overflow-hidden bg-foreground px-6 py-5 text-background transition-colors hover:text-primary-foreground"
+              className="label group/btn relative mt-8 flex w-full items-center justify-center gap-3 overflow-hidden bg-foreground px-6 py-5 text-background"
             >
               <span
                 aria-hidden
-                className="absolute inset-0 translate-y-full bg-primary transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0"
+                className="absolute inset-0 translate-y-full bg-primary transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-y-0"
               />
-            <span className="relative">Proceed to checkout</span>
+            <span className="relative transition-colors group-hover/btn:text-primary-foreground group-hover/btn:delay-300">Proceed to checkout</span>
           </Link>
 
           <button

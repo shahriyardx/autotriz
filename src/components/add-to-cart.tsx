@@ -42,13 +42,13 @@ export function AddToCart({
         type="button"
         disabled={disabled}
         onClick={() => add(product, quantity)}
-        className="label group relative inline-flex flex-1 items-center justify-center gap-3 overflow-hidden rounded-sm bg-foreground px-8 py-4 text-background transition-colors hover:text-primary-foreground disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none"
+        className="label group/btn relative inline-flex flex-1 items-center justify-center gap-3 overflow-hidden rounded-sm bg-foreground px-8 py-4 text-background disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none"
       >
         <span
           aria-hidden
-          className="absolute inset-0 translate-y-full bg-primary transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-disabled:translate-y-full"
+          className="absolute inset-0 translate-y-full bg-primary transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-y-0 group-disabled/btn:translate-y-full"
         />
-        <span className="relative">
+        <span className="relative transition-colors group-hover/btn:text-primary-foreground group-hover/btn:delay-300">
           {disabled ? "Out of stock" : "Add to cart"}
         </span>
       </button>

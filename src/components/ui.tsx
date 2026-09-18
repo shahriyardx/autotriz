@@ -125,9 +125,9 @@ export function Button({
         size === "lg" && "px-10 py-5",
         variant === "primary" && "bg-primary text-primary-foreground hover:text-primary-foreground",
         variant === "outline" &&
-          "border-2 border-foreground text-foreground group-hover/btn:text-background",
+          "border-2 border-foreground text-foreground transition-colors group-hover/btn:text-background group-hover/btn:delay-300",
         variant === "outline-light" &&
-          "border-2 border-foreground/40 text-foreground group-hover/btn:border-primary group-hover/btn:text-primary-foreground",
+          "border-2 border-foreground/40 text-foreground transition-colors group-hover/btn:border-primary group-hover/btn:text-primary-foreground group-hover/btn:delay-300",
         className,
       )}
     >
@@ -140,9 +140,14 @@ export function Button({
           variant === "outline-light" && "bg-primary",
         )}
       />
+      {/* The label waits for the fill. Colour alone takes 150ms and the
+          fill takes 400ms, so without the delay the text turns to its
+          hover colour while the old background is still there — dark on
+          dark, and the button reads as an empty rectangle. Nothing on
+          the way out, where the old colour is the safe one. */}
       <span
         className={cn(
-          "relative",
+          "relative transition-colors group-hover/btn:delay-300",
           variant === "primary" && "group-hover/btn:text-primary dark:group-hover/btn:text-background",
         )}
       >
@@ -151,7 +156,7 @@ export function Button({
       <span
         aria-hidden
         className={cn(
-          "relative transition-transform duration-300 group-hover/btn:translate-x-1",
+          "relative transition-[transform,color] duration-300 group-hover/btn:translate-x-1 group-hover/btn:delay-300",
           variant === "primary" && "group-hover/btn:text-primary dark:group-hover/btn:text-background",
         )}
       >
