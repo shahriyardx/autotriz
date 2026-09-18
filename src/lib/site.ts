@@ -168,7 +168,7 @@ export const nav: NavGroup[] = [
 export function buildHeaderNav(shopItems: NavItem[]): HeaderEntry[] {
   return [
     { name: "Shop", href: "/shop", items: shopItems.length ? shopItems : undefined },
-    { name: "Services", items: nav[0].items },
+    { name: "Services", href: "/services", items: nav[0].items },
     { name: "Visualizer", href: "/visualizer" },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
