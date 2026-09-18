@@ -155,10 +155,13 @@ export default async function HomePage() {
 
       {/* ================================================================
           WHY AUTOTRIZ
+          A pale band. It used to carry straight on from the numbers
+          above with the padding removed, so the two ran together as one
+          long dark slab instead of reading as two things.
           ================================================================ */}
-      <Band tone="dark" className="pt-0">
+      <Band tone="mist">
         <div className="shell">
-          <Heading tone="light" accent={page.text("benefits.accent")} rule>
+          <Heading accent={page.text("benefits.accent")} rule>
             {page.text("benefits.heading")}
           </Heading>
           <ul className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -227,7 +230,7 @@ export default async function HomePage() {
       {/* ================================================================
           TECHNOLOGY TESTING
           ================================================================ */}
-      <Band tone="white">
+      <Band tone="mist">
         <div className="shell">
           <Heading
             accent={page.text("certs.accent")}
