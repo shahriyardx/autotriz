@@ -1,12 +1,14 @@
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
-import { customerAddresses, orderItems, orders } from "@/db/schema";
+import { customerAddresses, discounts, orderItems, orders } from "@/db/schema";
 import { user } from "@/db/auth-schema";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { auth } from "@/lib/auth";
 import { getProduct, inStock } from "@/lib/catalogue";
 import { checkoutInput, shippingFor } from "@/lib/checkout";
+import { evaluateDiscount, normaliseCode } from "@/lib/discounts";
+import { toRule } from "@/server/api/routers/discount";
 import { FREE_SHIPPING_THRESHOLD, currency } from "@/lib/shop-config";
 import type { Address } from "@/db/schema";
 
@@ -100,7 +102,28 @@ export const checkoutRouter = createTRPCRouter({
 
     const subtotal = lines.reduce((sum, l) => sum + l.product.price * l.quantity, 0);
     const shipping = shippingFor(subtotal, FREE_SHIPPING_THRESHOLD);
-    const total = subtotal + shipping;
+
+    /* ---- the code is judged here, not in the browser ---- */
+    let discount = 0;
+    let discountCode: string | null = null;
+    let discountId: string | null = null;
+
+    if (input.discountCode) {
+      const [row] = await ctx.db
+        .select()
+        .from(discounts)
+        .where(eq(discounts.code, normaliseCode(input.discountCode)))
+        .limit(1);
+
+      const verdict = evaluateDiscount(row ? toRule(row) : null, subtotal);
+      if (!verdict.ok) throw new TRPCError({ code: "BAD_REQUEST", message: verdict.reason });
+
+      discount = verdict.amount;
+      discountCode = verdict.code;
+      discountId = row!.id;
+    }
+
+    const total = subtotal + shipping - discount;
 
     const email = input.email.trim().toLowerCase();
     let userId = ctx.user?.id ?? null;
@@ -161,6 +184,8 @@ export const checkoutRouter = createTRPCRouter({
           currency: currency.code,
           subtotal,
           shipping,
+          discount,
+          discountCode,
           total,
           shippingAddress,
           billingAddress,
@@ -188,6 +213,16 @@ export const checkoutRouter = createTRPCRouter({
           address: shippingAddress,
           isDefault: true,
         });
+      }
+
+      /* Counted inside the transaction, and incremented by the database
+         rather than by us — two orders placed in the same second must
+         not both read the same old number and write it back. */
+      if (discountId) {
+        await tx
+          .update(discounts)
+          .set({ usedCount: sql`${discounts.usedCount} + 1` })
+          .where(eq(discounts.id, discountId));
       }
 
       return row;

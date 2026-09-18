@@ -1,29 +1,17 @@
 import { desc } from "drizzle-orm";
 import { db } from "@/db";
 import { discounts } from "@/db/schema";
+import { DiscountManager } from "@/components/admin/discount-manager";
 import { requirePermission } from "@/lib/admin-guard";
 
 export const metadata = { title: "Discounts" };
 
 export default async function AdminDiscountsPage() {
   await requirePermission("discounts.edit");
+
+  /* Read here so the table is on the page in the first response; the
+     manager refetches the same query for anything it changes. */
   const rows = await db.select().from(discounts).orderBy(desc(discounts.createdAt));
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Discounts</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {rows.length} discount {rows.length === 1 ? "code" : "codes"}
-        </p>
-      </div>
-
-      <div className="rounded-lg border bg-background p-10 text-center">
-        <p className="text-sm text-muted-foreground">
-          The discounts table exists and is ready. Creating codes and
-          applying them to an order total is the next piece of work.
-        </p>
-      </div>
-    </div>
-  );
+  return <DiscountManager initial={rows} />;
 }

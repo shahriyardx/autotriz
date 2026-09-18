@@ -54,6 +54,17 @@ export function CheckoutForm({
   const lines = items.map((i) => ({ slug: i.slug, quantity: i.quantity }));
   const quote = api.checkout.quote.useQuery({ lines }, { enabled: ready && lines.length > 0 });
 
+  /* The code is checked as a query so the panel can show what it is
+     worth before the order exists. The server judges it again when the
+     order is placed — this is a preview, not a decision. */
+  const [codeDraft, setCodeDraft] = useState("");
+  const [applied, setApplied] = useState<string | null>(null);
+
+  const discount = api.discount.check.useQuery(
+    { code: applied ?? "", subtotal: quote.data?.subtotal ?? 0 },
+    { enabled: Boolean(applied) && Boolean(quote.data) },
+  );
+
   const form = useForm<Values>({
     resolver: zodResolver(checkoutInput),
     mode: "onTouched",
@@ -108,6 +119,8 @@ export function CheckoutForm({
   }
 
   const summary = quote.data;
+  const off = discount.data?.ok ? discount.data.amount : 0;
+
   const control = form.control;
 
   return (
@@ -119,6 +132,7 @@ export function CheckoutForm({
             ...values,
             lines,
             billing: values.billingSameAsShipping ? undefined : values.billing,
+            discountCode: discount.data?.ok ? applied ?? undefined : undefined,
           });
         },
         () => setFailed("Some details are missing. Check the fields marked below."),
@@ -302,12 +316,69 @@ export function CheckoutForm({
             ))}
           </ul>
 
+          {/* --- discount code --- */}
+          <div className="mt-6 border-t border-border pt-6">
+            {applied && discount.data?.ok ? (
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="label text-primary">{applied}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {discount.data.label} applied
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setApplied(null);
+                    setCodeDraft("");
+                  }}
+                  className="label text-muted-foreground underline-offset-4 hover:underline"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  aria-label="Discount code"
+                  placeholder="Discount code"
+                  value={codeDraft}
+                  onChange={(event) => setCodeDraft(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter") return;
+                    event.preventDefault();
+                    if (codeDraft.trim()) setApplied(codeDraft.trim().toUpperCase());
+                  }}
+                  className="w-full rounded-sm border border-border bg-background px-4 py-3 font-mono text-sm uppercase outline-none transition-colors focus:border-primary"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={!codeDraft.trim()}
+                  onClick={() => setApplied(codeDraft.trim().toUpperCase())}
+                >
+                  Apply
+                </Button>
+              </div>
+            )}
+
+            {applied && discount.data && !discount.data.ok ? (
+              <p className="mt-2 text-xs text-destructive" role="alert">
+                {discount.data.reason}
+              </p>
+            ) : null}
+          </div>
+
           <dl className="mt-6 space-y-3 text-sm">
             <Row label="Subtotal" value={formatPrice(summary?.subtotal ?? 0)} />
+            {off ? <Row label={`Discount (${applied})`} value={`− ${formatPrice(off)}`} /> : null}
             <Row label="Delivery" value={summary?.shipping ? formatPrice(summary.shipping) : "Free"} />
             <div className="flex items-baseline justify-between border-t border-border pt-4">
               <dt className="display text-base">Total</dt>
-              <dd className="display text-2xl tabular-nums">{formatPrice(summary?.total ?? 0)}</dd>
+              <dd className="display text-2xl tabular-nums">
+                {formatPrice(Math.max(0, (summary?.total ?? 0) - off))}
+              </dd>
             </div>
           </dl>
 

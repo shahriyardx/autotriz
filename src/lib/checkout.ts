@@ -40,6 +40,9 @@ export const checkoutInput = z
     billing: addressInput.optional(),
     notes: z.string().trim().max(2000).optional().or(z.literal("")),
     paymentMethod: z.literal("cod").default("cod"),
+    /* Checked again on the server. Whatever the browser believed the
+       code was worth is not consulted. */
+    discountCode: z.string().trim().max(32).optional().or(z.literal("")),
     /** Guests may open an account as they check out. */
     createAccount: z.boolean().default(false),
     password: z.string().optional().or(z.literal("")),
