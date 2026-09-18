@@ -128,11 +128,14 @@ export const certifications = [
 export type NavItem = { name: string; href: string; note?: string };
 export type NavGroup = { name: string; items: NavItem[] };
 
-/** Header navigation. An entry either links somewhere directly or opens
- *  a dropdown, which is how the current site's bar behaves. */
-export type HeaderEntry =
-  | { name: string; href: string; items?: never }
-  | { name: string; items: NavItem[]; href?: never };
+/** Header navigation. An entry can link somewhere, open a drop-down on
+ *  hover, or do both — Shop is both: hovering shows the categories,
+ *  clicking the word goes to the whole range. */
+export type HeaderEntry = {
+  name: string;
+  href?: string;
+  items?: NavItem[];
+};
 
 /* The Shop group is not listed here: its entries are the categories
    marked "show in menu" in the admin, read from the database on every
@@ -160,10 +163,11 @@ export const nav: NavGroup[] = [
    about, contact. The consumer range sits in the footer, as it does
    there — it is not a top-level entry. */
 /** Built per request, so the Shop menu reflects the categories the
- *  admin chose. Everything after it is fixed. */
+ *  admin chose. Shop carries a link as well as a menu: the categories
+ *  are a shortcut, not the only way in. */
 export function buildHeaderNav(shopItems: NavItem[]): HeaderEntry[] {
   return [
-    ...(shopItems.length ? [{ name: "Shop", items: shopItems }] : []),
+    { name: "Shop", href: "/shop", items: shopItems.length ? shopItems : undefined },
     { name: "Services", items: nav[0].items },
     { name: "Visualizer", href: "/visualizer" },
     { name: "About", href: "/about" },

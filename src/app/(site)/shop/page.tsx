@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { Newsletter } from "@/components/newsletter";
-import { PageHero } from "@/components/page-hero";
-import { ShopBrowser } from "@/components/shop/shop-browser";
+import { ProductGrid } from "@/components/shop/product-grid";
+import { ShopBanner } from "@/components/shop/shop-banner";
 import { Band } from "@/components/ui";
-import { parseShopParams } from "@/components/shop/shop-params";
+import { listProducts } from "@/lib/catalogue";
 import { getPage } from "@/lib/page-store";
-import { trpc } from "@/trpc/server";
 
 export const metadata: Metadata = {
   title: "Shop",
@@ -13,30 +12,54 @@ export const metadata: Metadata = {
     "The full AUTOTRIZ automotive range: ceramic coatings, polishing compounds, surface preparation and after care.",
 };
 
-/** The first page is rendered on the server from the URL, so it is
- *  indexable and paints with data. After that the browser talks to the
- *  same tRPC procedures directly. */
-export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
-  const input = parseShopParams(await searchParams);
-
-  const [results, facets] = await Promise.all([
-    trpc.shop.search(input),
-    trpc.shop.facets(),
+/** The whole range on one page.
+ *
+ *  There is no filtering sidebar. The catalogue is small enough that a
+ *  shopper can see all of it at once, and a set of filters over a
+ *  dozen products is furniture rather than help. */
+export default async function ShopPage() {
+  const [products, featured] = await Promise.all([
+    listProducts(),
+    listProducts({ featuredOnly: true, limit: 3 }),
   ]);
+
   const page = getPage("shop");
+
+  /* Nothing ticked as featured yet, or not enough of it — the banner
+     falls back to the front of the range rather than standing empty. */
+  const banner = featured.length === 3 ? featured : products.slice(0, 3);
 
   return (
     <>
-      <PageHero
+      <ShopBanner
         title={page.text("hero.title")}
         accent={page.text("hero.accent")}
         subhead={page.text("hero.subhead")}
         lede={page.text("hero.lede")}
+        products={banner}
       />
 
-      <Band tone="white" className="py-12 md:py-16">
-        <div className="shell">
-          <ShopBrowser initialInput={input} initialResults={results} initialFacets={facets} />
+      <Band tone="white" className="py-14 md:py-20">
+        <div className="shell" id="products">
+          <div className="flex flex-wrap items-baseline justify-between gap-4">
+            <h2 className="display text-[clamp(1.375rem,2.4vw,1.875rem)]">
+              All <span className="accent">products</span>
+            </h2>
+            <p className="label text-muted-foreground">
+              {products.length} {products.length === 1 ? "product" : "products"}
+            </p>
+          </div>
+          <span aria-hidden className="mt-6 block h-0.5 w-14 bg-primary" />
+
+          <div className="mt-10">
+            {products.length ? (
+              <ProductGrid items={products} />
+            ) : (
+              <p className="py-16 text-center text-foreground/60">
+                Nothing in the shop yet. Please check back shortly.
+              </p>
+            )}
+          </div>
         </div>
       </Band>
 

@@ -13,7 +13,7 @@ import { TRPCProvider } from "@/trpc/react";
 export const dynamic = "force-dynamic";
 
 export default async function SiteLayout({ children }: LayoutProps<"/">) {
-  // The shop menu is whatever the admin ticked, read fresh each request.
+  // The Shop menu is whatever the admin ticked, read fresh each request.
   const [shopItems, shop] = await Promise.all([menuCategories(), getShopSettings()]);
 
   return (

@@ -94,8 +94,28 @@ export function SiteHeader({
           </Link>
 
           <nav className="hidden lg:flex lg:items-center">
-            {headerNav.map((entry) =>
-              entry.items ? (
+            {headerNav.map((entry) => {
+              const className = cn(
+                "relative px-5 py-7 text-[0.95rem] text-foreground/85 transition-colors hover:text-primary",
+                open === entry.name && "text-primary",
+              );
+
+              /* An entry with somewhere to go stays a link even when it
+                 also opens a menu: hovering reveals the shortcuts,
+                 clicking the word goes to the page itself. */
+              return entry.href ? (
+                <Link
+                  key={entry.name}
+                  href={entry.href}
+                  onMouseEnter={() => setOpen(entry.items ? entry.name : null)}
+                  onFocus={() => setOpen(entry.items ? entry.name : null)}
+                  onClick={close}
+                  aria-expanded={entry.items ? open === entry.name : undefined}
+                  className={className}
+                >
+                  {entry.name}
+                </Link>
+              ) : (
                 <button
                   key={entry.name}
                   type="button"
@@ -103,24 +123,12 @@ export function SiteHeader({
                   onFocus={() => setOpen(entry.name)}
                   onClick={() => setOpen(open === entry.name ? null : entry.name)}
                   aria-expanded={open === entry.name}
-                  className={cn(
-                    "relative px-5 py-7 text-[0.95rem] text-foreground/85 transition-colors hover:text-primary",
-                    open === entry.name && "text-primary",
-                  )}
+                  className={className}
                 >
                   {entry.name}
                 </button>
-              ) : (
-                <Link
-                  key={entry.name}
-                  href={entry.href}
-                  onMouseEnter={() => setOpen(null)}
-                  className="px-5 py-7 text-[0.95rem] text-foreground/85 transition-colors hover:text-primary"
-                >
-                  {entry.name}
-                </Link>
-              ),
-            )}
+              );
+            })}
           </nav>
 
           <button
@@ -196,7 +204,17 @@ export function SiteHeader({
             <div key={entry.name} className="border-b border-foreground/10 py-5">
               {entry.items ? (
                 <>
-                  <p className="label text-primary">{entry.name}</p>
+                  {entry.href ? (
+                    <Link
+                      href={entry.href}
+                      onClick={close}
+                      className="display-tight block text-lg text-foreground"
+                    >
+                      {entry.name}
+                    </Link>
+                  ) : (
+                    <p className="label text-primary">{entry.name}</p>
+                  )}
                   <ul className="mt-4 space-y-3">
                     {entry.items.map((item) => (
                       <li key={item.href}>
@@ -211,7 +229,7 @@ export function SiteHeader({
                     ))}
                   </ul>
                 </>
-              ) : (
+              ) : entry.href ? (
                 <Link
                   href={entry.href}
                   onClick={close}
@@ -219,7 +237,7 @@ export function SiteHeader({
                 >
                   {entry.name}
                 </Link>
-              )}
+              ) : null}
             </div>
           ))}
           <Link
