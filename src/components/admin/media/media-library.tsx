@@ -529,6 +529,12 @@ function MediaGrid({
                   >
                     <span className="relative block aspect-square">
                       <Image
+                        // Unoptimised: the library lists every file ever
+                        // uploaded, and an older one may sit on a host
+                        // this deployment does not know about. Going
+                        // through the optimiser would make that a
+                        // runtime error instead of a picture.
+                        unoptimized
                         src={item.url}
                         alt={item.alt ?? ""}
                         fill
@@ -893,6 +899,9 @@ function MediaDetailsDialog({
               <>
                 <div className="relative aspect-[4/3] overflow-hidden rounded-md border bg-muted">
                   <Image
+                    // Same reason as the grid: an older file may live on
+                    // a host this deployment does not know about.
+                    unoptimized
                     src={preview}
                     alt={alt || item.filename}
                     fill

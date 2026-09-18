@@ -171,6 +171,7 @@ export function ImageManager({ productId }: { productId: string }) {
             >
               <div className="relative aspect-square">
                 <Image
+                  unoptimized
                   src={row.url}
                   alt={row.alt ?? ""}
                   fill
