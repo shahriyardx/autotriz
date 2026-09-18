@@ -124,15 +124,15 @@ export function Button({
         size === "md" && "px-8 py-4",
         size === "lg" && "px-10 py-5",
         variant === "primary" && "bg-primary text-primary-foreground",
-        /* The outline variants do not fill. A dark-on-light button that
-           fills dark has no safe moment: flip the text early and it is
-           light on white, flip it late and it is dark on the arriving
-           dark. Border and text moving to the accent together is
-           readable at every point of the transition. */
+        /* Outline buttons fill with the accent and keep their dark
+           label, which is the solid button's own colour pairing. The
+           label never changes on a light band, so there is no moment
+           where the text and the background are fighting — and unlike
+           accent-on-white, the result is actually readable. */
         variant === "outline" &&
-          "border-2 border-foreground text-foreground hover:border-primary hover:text-primary",
+          "border-2 border-foreground text-foreground hover:border-primary hover:bg-primary",
         variant === "outline-light" &&
-          "border-2 border-foreground/40 text-foreground hover:border-primary hover:text-primary",
+          "border-2 border-foreground/40 text-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground",
         className,
       )}
     >
@@ -152,8 +152,14 @@ export function Button({
       <span
         className={cn(
           "relative transition-colors",
+          /* `background` is the opposite of `foreground` in either
+             palette, and the fill is `foreground` — so this is white on
+             ink on a pale page and ink on white inside a dark band,
+             without a second rule for the dark case. The accent was the
+             wrong choice here: yellow on ink is dim next to the label
+             it replaces. */
           variant === "primary" &&
-            "group-hover/btn:text-primary group-hover/btn:delay-300 dark:group-hover/btn:text-background",
+            "group-hover/btn:text-background group-hover/btn:delay-300",
         )}
       >
         {children}
@@ -162,8 +168,14 @@ export function Button({
         aria-hidden
         className={cn(
           "relative transition-[transform,color] duration-300 group-hover/btn:translate-x-1",
+          /* `background` is the opposite of `foreground` in either
+             palette, and the fill is `foreground` — so this is white on
+             ink on a pale page and ink on white inside a dark band,
+             without a second rule for the dark case. The accent was the
+             wrong choice here: yellow on ink is dim next to the label
+             it replaces. */
           variant === "primary" &&
-            "group-hover/btn:text-primary group-hover/btn:delay-300 dark:group-hover/btn:text-background",
+            "group-hover/btn:text-background group-hover/btn:delay-300",
         )}
       >
         →
