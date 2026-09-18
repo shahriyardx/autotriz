@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ShieldCheck } from "lucide-react";
 import { CartButton } from "@/components/cart/cart-button";
 import { type HeaderEntry } from "@/lib/site";
 import type { ShopSettings } from "@/lib/shop-settings";
@@ -11,9 +12,12 @@ import { cn } from "@/lib/cn";
 export function SiteHeader({
   nav: headerNav,
   shop,
+  staff = false,
 }: {
   nav: HeaderEntry[];
   shop: ShopSettings;
+  /** True only for signed-in staff; shows the shortcut into /admin. */
+  staff?: boolean;
 }) {
   const [open, setOpen] = useState<string | null>(null);
   const [drawer, setDrawer] = useState(false);
@@ -68,6 +72,19 @@ export function SiteHeader({
             >
               {shop.email}
             </a>
+            {/* Only staff see this, and only because the server said so
+                — it is a shortcut, not the thing keeping them out.
+                Every admin page checks for itself. */}
+            {staff ? (
+              <Link
+                href="/admin"
+                className="label flex items-center gap-1.5 text-primary-foreground transition-opacity hover:opacity-70"
+              >
+                <ShieldCheck className="size-3.5" aria-hidden />
+                Admin
+              </Link>
+            ) : null}
+
             <Link
               href="/account"
               className="label text-primary-foreground transition-opacity hover:opacity-70"

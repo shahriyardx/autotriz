@@ -33,6 +33,15 @@ export async function requirePermission(permission: Permission) {
   return user;
 }
 
+/** Whether the visitor is staff, for the storefront's shortcut into the
+ *  admin panel. Unlike the guards above this never redirects — a
+ *  customer, or nobody at all, simply gets `false`. */
+export async function isStaff() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const user = session?.user;
+  return Boolean(user && !user.banned && STAFF_ROLES.has(user.role ?? ""));
+}
+
 export async function currentUser() {
   const session = await auth.api.getSession({ headers: await headers() });
   return session?.user ?? null;
