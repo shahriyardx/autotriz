@@ -11,7 +11,7 @@ import { Loader2, Lock } from "lucide-react";
 import { api } from "@/trpc/react";
 import { useCart } from "@/components/cart/cart-context";
 import { checkoutInput, PAYMENT_METHODS } from "@/lib/checkout";
-import { COUNTRY, DISTRICTS, upazilasIn } from "@/lib/bangladesh";
+import { COUNTRY } from "@/lib/bangladesh";
 import { formatPrice } from "@/lib/shop-config";
 import { Button } from "@/components/ui-kit/button";
 import { Checkbox } from "@/components/ui-kit/checkbox";
@@ -100,7 +100,6 @@ export function CheckoutForm({
 
   const sameBilling = form.watch("billingSameAsShipping");
   const createAccount = form.watch("createAccount");
-  const method = form.watch("paymentMethod");
 
   if (!ready) {
     return <p className="label py-20 text-muted-foreground">Loading your cart…</p>;
@@ -199,7 +198,7 @@ export function CheckoutForm({
         {/* ---------------- delivery ---------------- */}
         <section>
           <SectionHead step="02" title="Delivery address" />
-          <AddressFields control={control} form={form} prefix="shipping" />
+          <AddressFields control={control} prefix="shipping" />
 
           <FieldGroup className="mt-7">
             <Controller
@@ -242,7 +241,7 @@ export function CheckoutForm({
           {!sameBilling ? (
             <div className="mt-8 rounded-lg border p-5">
               <p className="label mb-5 text-muted-foreground">Billing address</p>
-              <AddressFields control={control} form={form} prefix="billing" />
+              <AddressFields control={control} prefix="billing" />
             </div>
           ) : null}
         </section>
@@ -368,22 +367,19 @@ export function CheckoutForm({
 }
 
 /* ==================================================================
-   Address — the district narrows the upazila list, which is the pair a
-   courier in Bangladesh actually needs.
+   Address — district and upazila are the pair a courier in Bangladesh
+   actually needs. Both are typed rather than chosen: a picker of
+   sixty-four districts, each narrowing a second picker, was more work
+   than writing the name of the place you live.
    ================================================================== */
 
 function AddressFields({
   control,
-  form,
   prefix,
 }: {
   control: Control<Values>;
-  form: ReturnType<typeof useForm<Values>>;
   prefix: "shipping" | "billing";
 }) {
-  const district = form.watch(`${prefix}.region` as Name) as string | undefined;
-  const upazilas = upazilasIn(district);
-
   return (
     <FieldGroup>
       <TextField control={control} name={`${prefix}.name` as Name} label="Full name" autoComplete="name" />
@@ -403,21 +399,19 @@ function AddressFields({
       />
 
       <div className="grid gap-6 sm:grid-cols-2">
-        <SelectField
+        <TextField
           control={control}
           name={`${prefix}.region` as Name}
           label="District"
-          placeholder="Choose a district"
-          options={DISTRICTS}
-          onPick={() => form.setValue(`${prefix}.city` as Name, "" as never)}
+          placeholder="Dhaka"
+          autoComplete="address-level1"
         />
-        <SelectField
+        <TextField
           control={control}
           name={`${prefix}.city` as Name}
           label="Upazila / thana"
-          placeholder={district ? "Choose an upazila" : "Choose a district first"}
-          options={upazilas}
-          disabled={!district}
+          placeholder="Gulshan"
+          autoComplete="address-level2"
         />
       </div>
 
@@ -483,58 +477,6 @@ function TextField({
             value={(field.value as string) ?? ""}
           />
           {help && !fieldState.invalid ? <FieldDescription>{help}</FieldDescription> : null}
-          {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
-        </Field>
-      )}
-    />
-  );
-}
-
-function SelectField({
-  control,
-  name,
-  label,
-  placeholder,
-  options,
-  disabled,
-  onPick,
-}: {
-  control: Control<Values>;
-  name: Name;
-  label: string;
-  placeholder: string;
-  options: string[];
-  disabled?: boolean;
-  onPick?: () => void;
-}) {
-  return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
-          <Select
-            value={(field.value as string) || undefined}
-            disabled={disabled}
-            onValueChange={(value) => {
-              field.onChange(value);
-              onPick?.();
-            }}
-          >
-            <SelectTrigger id={field.name} className="w-full" aria-invalid={fieldState.invalid}>
-              <SelectValue placeholder={placeholder} />
-            </SelectTrigger>
-            {/* Sixty-four districts, and up to twelve upazilas each, so
-                the menu scrolls rather than running off the screen. */}
-            <SelectContent className="max-h-72">
-              {options.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
         </Field>
       )}

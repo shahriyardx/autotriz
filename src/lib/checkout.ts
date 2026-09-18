@@ -9,9 +9,9 @@ export const addressInput = z.object({
   line1: z.string().trim().min(3, "Enter the street address"),
   line2: z.string().trim().optional().or(z.literal("")),
   /** District. */
-  region: z.string().trim().min(2, "Choose a district"),
+  region: z.string().trim().min(2, "Enter the district"),
   /** Upazila or thana — the smallest unit a courier needs. */
-  city: z.string().trim().min(2, "Choose an upazila"),
+  city: z.string().trim().min(2, "Enter the upazila or thana"),
   postcode: z.string().trim().optional().or(z.literal("")),
   country: z.string().trim().min(2, "Enter the country"),
 });

@@ -8,7 +8,7 @@ import { Loader2, MapPin, Plus, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/trpc/react";
 import { addressInput } from "@/lib/checkout";
-import { COUNTRY, DISTRICTS, upazilasIn } from "@/lib/bangladesh";
+import { COUNTRY } from "@/lib/bangladesh";
 import { cn } from "@/lib/cn";
 
 /* The customer's saved delivery addresses. One is the default, which is
@@ -188,55 +188,6 @@ function AddressForm({
     },
   });
 
-  const district = form.watch("address.region");
-
-  /** A linked dropdown: division narrows district, district narrows upazila. */
-  const select = (
-    name: "address.region" | "address.city",
-    label: string,
-    placeholder: string,
-    options: string[],
-    disabled?: boolean,
-    onPick?: () => void,
-  ) => {
-    const id = `addr-${name.replace(/\./g, "-")}`;
-    const registered = form.register(name);
-    const error = name
-      .split(".")
-      .reduce<unknown>(
-        (acc, part) => (acc as Record<string, unknown> | undefined)?.[part],
-        form.formState.errors as unknown,
-      ) as { message?: string } | undefined;
-
-    return (
-      <div key={name}>
-        <label htmlFor={id} className="label text-muted-foreground">
-          {label}
-        </label>
-        <select
-          id={id}
-          disabled={disabled}
-          {...registered}
-          onChange={(event) => {
-            void registered.onChange(event);
-            onPick?.();
-          }}
-          className={cn(
-            "mt-3 w-full border-b border-border bg-transparent pb-3 text-foreground outline-none transition-colors focus:border-primary disabled:opacity-50",
-            error && "border-destructive",
-          )}
-        >
-          <option value="">{placeholder}</option>
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        {error?.message ? <p className="mt-2 text-xs text-destructive">{error.message}</p> : null}
-      </div>
-    );
-  };
 
   const field = (name: string, label: string, optional?: boolean) => {
     const id = `addr-${name.replace(/\./g, "-")}`;
@@ -268,16 +219,8 @@ function AddressForm({
       {field("address.line2", "Apartment, floor, landmark", true)}
 
       <div className="grid gap-5 sm:grid-cols-2">
-        {select("address.region", "District", "Choose a district", DISTRICTS, false, () =>
-          form.setValue("address.city", ""),
-        )}
-        {select(
-          "address.city",
-          "Upazila / thana",
-          district ? "Choose an upazila" : "Choose a district first",
-          upazilasIn(district),
-          !district,
-        )}
+        {field("address.region", "District")}
+        {field("address.city", "Upazila / thana")}
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">

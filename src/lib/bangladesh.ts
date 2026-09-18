@@ -1,3 +1,12 @@
+/* The districts and upazilas of Bangladesh.
+
+   This no longer drives any picker — checkout and the address book
+   take both as typed text, because naming the place you live is
+   less work than finding it in a list of sixty-four. Only COUNTRY
+   is read now; the rest is kept for whenever an address needs
+   checking or a delivery zone needs defining.
+   ================================================================ */
+
 /* ==================================================================
    Bangladesh delivery areas.
 
