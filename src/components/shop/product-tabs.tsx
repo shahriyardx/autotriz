@@ -24,6 +24,10 @@ export function ProductTabs({ product }: { product: Product }) {
 
   const [active, setActive] = useState<(typeof tabs)[number]["id"]>("description");
 
+  /* A blank line in the admin's feature box would otherwise reach the
+     page as a bullet with nothing beside it. */
+  const features = product.features.map((f) => f.trim()).filter(Boolean);
+
   return (
     <div className="border-t border-border">
       <div role="tablist" className="flex flex-wrap gap-x-8 gap-y-2">
@@ -48,17 +52,24 @@ export function ProductTabs({ product }: { product: Product }) {
 
       <div role="tabpanel" className="max-w-3xl py-8">
         {active === "description" ? (
-          <div className="space-y-5">
+          <div className="space-y-8">
             <Markdown>{product.description}</Markdown>
-            {product.features.length ? (
-              <ul className="space-y-2.5">
-                {product.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3 text-foreground/75">
-                    <span aria-hidden className="mt-2.5 h-1 w-3 shrink-0 bg-primary" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+
+            {/* Headed and ruled off. Unlabelled, a feature list sitting
+                under a description that ends in its own bullets read as
+                one long list with no telling where one stopped. */}
+            {features.length ? (
+              <div className="border-t border-border pt-7">
+                <h3 className="label text-muted-foreground">At a glance</h3>
+                <ul className="mt-5 space-y-2.5">
+                  {features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-3 text-foreground/75">
+                      <span aria-hidden className="mt-2.5 h-1 w-3 shrink-0 bg-primary" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ) : null}
           </div>
         ) : null}

@@ -1052,11 +1052,14 @@ export function ProductForm({ product }: { product?: ProductFormProduct }) {
               name="featured"
               control={form.control}
               render={({ field }) => (
-                <Field orientation="horizontal">
+                <Field orientation="horizontal" className="items-start">
                   <Checkbox
                     id={field.name}
                     checked={field.value}
                     onCheckedChange={(on) => field.onChange(on === true)}
+                    // Sits against the label's first line, not the middle
+                    // of the label and its description together.
+                    className="mt-0.5"
                   />
                   <div>
                     <FieldLabel htmlFor={field.name} className="font-normal">

@@ -44,8 +44,18 @@ import { cn } from "@/lib/cn";
 /** `tiptap-markdown` adds this to the editor storage but ships no types
  *  for it, so declare the one method we use. */
 type MarkdownStorage = { markdown: { getMarkdown: () => string } };
+/** An empty list item is easy to leave behind — press Enter at the end
+ *  of a list and there it is. It looks like nothing in the editor and
+ *  renders as a bullet with no text beside it on the product page, so
+ *  it is dropped on the way out. */
+const EMPTY_LIST_ITEM = /^[ \t]*(?:[-*+]|\d+[.)])[ \t]*$/;
+
 const getMarkdown = (editor: Editor) =>
-  (editor.storage as unknown as MarkdownStorage).markdown.getMarkdown();
+  (editor.storage as unknown as MarkdownStorage).markdown
+    .getMarkdown()
+    .split("\n")
+    .filter((line) => !EMPTY_LIST_ITEM.test(line))
+    .join("\n");
 
 export function MarkdownEditor({
   value,
