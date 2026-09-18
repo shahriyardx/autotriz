@@ -59,11 +59,13 @@ export async function CategoryPage({
             <Heading align="left" size="sm" accent={`(${items.length})`}>
               Products
             </Heading>
+            {/* The shop has no filters to send anyone to any more — the
+                whole range is one page. */}
             <Link
-              href={`/shop?category=${slug}`}
+              href="/shop"
               className="label border-b-2 border-primary pb-1 text-foreground"
             >
-              Filter and sort →
+              See the whole range →
             </Link>
           </div>
           <div className="mt-12">

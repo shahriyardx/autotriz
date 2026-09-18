@@ -637,7 +637,9 @@ export function ProductForm({ product }: { product?: ProductFormProduct }) {
                           aria-invalid={fieldState.invalid}
                           {...field}
                         />
-                        <FieldDescription>Drives the surface filter in the shop.</FieldDescription>
+                        <FieldDescription>
+                          Shown in the product&apos;s specification table.
+                        </FieldDescription>
                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                       </Field>
                     )}
