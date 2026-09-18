@@ -1,15 +1,13 @@
-import Image from "next/image";
-import Link from "next/link";
+import { ShopBannerProducts } from "@/components/shop/shop-banner-products";
 import { Button } from "@/components/ui";
-import { formatPrice } from "@/lib/shop-config";
 import type { Product } from "@/lib/catalogue";
 
 /* ==================================================================
    THE SHOP BANNER
 
-   The top of the shop: the range on the left, three products priced
-   on the right. Which three is an admin decision — whatever is ticked
-   as featured — so this is a shop window that can be redressed
+   The top of the shop: the range on the left, featured products
+   priced on the right. Which ones is an admin decision — whatever is
+   ticked as featured — so this is a shop window that can be redressed
    without a deploy.
    ================================================================== */
 
@@ -60,73 +58,8 @@ export function ShopBanner({
           </div>
         </div>
 
-        {products.length ? (
-          <ul className="grid grid-cols-3 gap-3 sm:gap-4">
-            {products.map((product) => (
-              <li key={product.id}>
-                <BannerProduct product={product} />
-              </li>
-            ))}
-          </ul>
-        ) : null}
+        <ShopBannerProducts products={products} />
       </div>
     </section>
-  );
-}
-
-/* ------------------------------------------------------------------
-   One product in the banner. Deliberately smaller than a card in the
-   grid below — a taste of the range, not a second catalogue.
-   ------------------------------------------------------------------ */
-
-function BannerProduct({ product }: { product: Product }) {
-  const onSale =
-    product.compareAtPrice !== null && product.compareAtPrice > product.price;
-
-  return (
-    <Link
-      href={`/products/${product.slug}`}
-      className="group flex h-full flex-col border border-foreground/12 bg-background/40 transition-colors hover:border-primary"
-    >
-      <span className="relative block aspect-square overflow-hidden bg-foreground/5">
-        {product.image ? (
-          <Image
-            src={product.image}
-            alt={product.name}
-            width={600}
-            height={600}
-            sizes="(min-width: 1024px) 15vw, 30vw"
-            className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
-          />
-        ) : (
-          <span className="label absolute inset-0 flex items-center justify-center text-muted-foreground">
-            No image
-          </span>
-        )}
-
-        {onSale ? (
-          <span className="label absolute left-2 top-2 bg-primary px-1.5 py-1 text-primary-foreground">
-            Sale
-          </span>
-        ) : null}
-      </span>
-
-      <span className="flex flex-1 flex-col gap-1.5 p-3">
-        <span className="display-tight line-clamp-2 text-xs leading-snug text-foreground transition-colors group-hover:text-primary sm:text-sm">
-          {product.name}
-        </span>
-
-        <span className="mt-auto flex flex-wrap items-baseline gap-2">
-          <span className="display text-sm text-primary sm:text-base">
-            {formatPrice(product.price)}
-          </span>
-          {onSale && product.compareAtPrice !== null ? (
-            <span className="text-xs text-foreground/40 line-through">
-              {formatPrice(product.compareAtPrice)}
-            </span>
-          ) : null}
-        </span>
-      </span>
-    </Link>
   );
 }

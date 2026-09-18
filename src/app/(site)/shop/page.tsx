@@ -20,14 +20,21 @@ export const metadata: Metadata = {
 export default async function ShopPage() {
   const [products, featured] = await Promise.all([
     listProducts(),
-    listProducts({ featuredOnly: true, limit: 3 }),
+    listProducts({ featuredOnly: true }),
   ]);
 
   const page = getPage("shop");
 
-  /* Nothing ticked as featured yet, or not enough of it — the banner
-     falls back to the front of the range rather than standing empty. */
-  const banner = featured.length === 3 ? featured : products.slice(0, 3);
+  /* Every featured product goes in the banner, and it slides once
+     there are more than three. Below three, the front of the range
+     makes the row up rather than leaving it half empty. */
+  const banner =
+    featured.length >= 3
+      ? featured
+      : [
+          ...featured,
+          ...products.filter((p) => !p.featured).slice(0, 3 - featured.length),
+        ];
 
   return (
     <>

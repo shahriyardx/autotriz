@@ -83,6 +83,7 @@ const DEMO: Demo[] = [
     size: "50 ml",
     features: ["Forgiving flash time", "3 year durability", "Warm climate friendly"],
     stock: 30,
+    featured: true,
   },
   {
     slug: "autotriz-glass-pro",
@@ -239,6 +240,7 @@ const DEMO: Demo[] = [
     size: "100 ml",
     features: ["No machine needed", "12 month durability", "Kit included"],
     stock: 90,
+    featured: true,
   },
 ];
 

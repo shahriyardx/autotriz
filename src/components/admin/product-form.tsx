@@ -1058,9 +1058,15 @@ export function ProductForm({ product }: { product?: ProductFormProduct }) {
                     checked={field.value}
                     onCheckedChange={(on) => field.onChange(on === true)}
                   />
-                  <FieldLabel htmlFor={field.name} className="font-normal">
-                    This is a featured product
-                  </FieldLabel>
+                  <div>
+                    <FieldLabel htmlFor={field.name} className="font-normal">
+                      This is a featured product
+                    </FieldLabel>
+                    <FieldDescription>
+                      The first three featured products fill the banner at the top
+                      of the shop, and featured products lead the listings.
+                    </FieldDescription>
+                  </div>
                 </Field>
               )}
             />

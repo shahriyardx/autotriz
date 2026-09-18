@@ -137,7 +137,7 @@ export function Button({
       <span
         className={cn(
           "relative",
-          variant === "primary" && "group-hover:text-primary",
+          variant === "primary" && "group-hover:text-primary dark:group-hover:text-background",
         )}
       >
         {children}
@@ -146,7 +146,7 @@ export function Button({
         aria-hidden
         className={cn(
           "relative transition-transform duration-300 group-hover:translate-x-1",
-          variant === "primary" && "group-hover:text-primary",
+          variant === "primary" && "group-hover:text-primary dark:group-hover:text-background",
         )}
       >
         →
