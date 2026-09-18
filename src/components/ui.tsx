@@ -123,32 +123,37 @@ export function Button({
         "label group/btn relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-sm transition-colors duration-300",
         size === "md" && "px-8 py-4",
         size === "lg" && "px-10 py-5",
-        variant === "primary" && "bg-primary text-primary-foreground hover:text-primary-foreground",
+        variant === "primary" && "bg-primary text-primary-foreground",
+        /* The outline variants do not fill. A dark-on-light button that
+           fills dark has no safe moment: flip the text early and it is
+           light on white, flip it late and it is dark on the arriving
+           dark. Border and text moving to the accent together is
+           readable at every point of the transition. */
         variant === "outline" &&
-          "border-2 border-foreground text-foreground transition-colors group-hover/btn:text-background group-hover/btn:delay-300",
+          "border-2 border-foreground text-foreground hover:border-primary hover:text-primary",
         variant === "outline-light" &&
-          "border-2 border-foreground/40 text-foreground transition-colors group-hover/btn:border-primary group-hover/btn:text-primary-foreground group-hover/btn:delay-300",
+          "border-2 border-foreground/40 text-foreground hover:border-primary hover:text-primary",
         className,
       )}
     >
+      {/* Only the solid button fills: it starts on the accent, so the
+          panel sliding up behind the label has somewhere to go. */}
+      {variant === "primary" ? (
+        <span
+          aria-hidden
+          className="absolute inset-0 -z-0 translate-y-full bg-foreground transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-y-0"
+        />
+      ) : null}
+      {/* On the solid button the label waits for the fill. Its colour
+          alone takes 150ms and the panel takes 400ms, so flipping it
+          early turns the text the accent colour while the accent is
+          still the background behind it. Nothing on the way out, where
+          the colour it returns to is the safe one. */}
       <span
-        aria-hidden
         className={cn(
-          "absolute inset-0 -z-0 translate-y-full transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-y-0",
-          variant === "primary" && "bg-foreground",
-          variant === "outline" && "bg-foreground",
-          variant === "outline-light" && "bg-primary",
-        )}
-      />
-      {/* The label waits for the fill. Colour alone takes 150ms and the
-          fill takes 400ms, so without the delay the text turns to its
-          hover colour while the old background is still there — dark on
-          dark, and the button reads as an empty rectangle. Nothing on
-          the way out, where the old colour is the safe one. */}
-      <span
-        className={cn(
-          "relative transition-colors group-hover/btn:delay-300",
-          variant === "primary" && "group-hover/btn:text-primary dark:group-hover/btn:text-background",
+          "relative transition-colors",
+          variant === "primary" &&
+            "group-hover/btn:text-primary group-hover/btn:delay-300 dark:group-hover/btn:text-background",
         )}
       >
         {children}
@@ -156,8 +161,9 @@ export function Button({
       <span
         aria-hidden
         className={cn(
-          "relative transition-[transform,color] duration-300 group-hover/btn:translate-x-1 group-hover/btn:delay-300",
-          variant === "primary" && "group-hover/btn:text-primary dark:group-hover/btn:text-background",
+          "relative transition-[transform,color] duration-300 group-hover/btn:translate-x-1",
+          variant === "primary" &&
+            "group-hover/btn:text-primary group-hover/btn:delay-300 dark:group-hover/btn:text-background",
         )}
       >
         →
