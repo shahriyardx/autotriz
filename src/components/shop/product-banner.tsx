@@ -62,7 +62,7 @@ export function ProductBanner({
           {/* Heavier on the left, where the words are. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-background/95 via-background/80 to-background/60"
+            className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-background/92 via-background/70 to-background/25"
           />
         </>
       ) : (
@@ -76,9 +76,7 @@ export function ProductBanner({
 
       <div className="shell relative grid items-center gap-12 py-16 md:py-20 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-16">
         <div>
-          {subhead ? <p className="label text-primary">{subhead}</p> : null}
-
-          <h1 className="display mt-4 text-[clamp(2rem,4.4vw,3.25rem)] text-foreground">
+          <h1 className="display text-[clamp(2rem,4.4vw,3.25rem)] text-foreground">
             {title}
             {accent ? (
               <>
@@ -88,8 +86,13 @@ export function ProductBanner({
             ) : null}
           </h1>
 
+          {/* The one-line promise, in the size the page heroes use it.
+              It is a sentence, not a label, so it is not set in tiny
+              letter-spaced capitals. */}
+          {subhead ? <p className="subhead mt-4 max-w-lg">{subhead}</p> : null}
+
           {lede ? (
-            <p className="lede mt-6 max-w-lg text-foreground/70">{lede}</p>
+            <p className="lede mt-5 max-w-lg text-foreground/70">{lede}</p>
           ) : null}
 
           <div className="mt-9 flex flex-wrap gap-3">
