@@ -215,17 +215,22 @@ export function FeatureCard({
   className?: string;
 }) {
   return (
+    /* Left-aligned. A three-line paragraph centred under a centred icon
+       under a centred heading gives the eye a different starting point
+       on every line, and six of them in a grid read as a template
+       rather than as something written. */
     <div
       className={cn(
-        "group border border-foreground/15 bg-card p-8 text-center transition-colors duration-500 hover:border-primary",
+        "group border border-foreground/15 bg-card p-8 transition-colors duration-300",
+        "hover:border-primary hover:bg-foreground/[0.04]",
         className,
       )}
     >
-      <div className="mx-auto flex h-14 w-14 items-center justify-center text-primary">
+      <div className="grid size-12 place-items-center border border-primary/30 p-2.5 text-primary transition-colors duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground">
         {icon}
       </div>
-      <h3 className="display mt-6 text-lg text-foreground">{title}</h3>
-      <p className="mt-4 text-sm leading-relaxed text-foreground/60">{children}</p>
+      <h3 className="display mt-6 text-base text-foreground">{title}</h3>
+      <p className="mt-3 text-sm leading-relaxed text-foreground/70">{children}</p>
     </div>
   );
 }
@@ -246,8 +251,14 @@ export function Spec({ k, v }: { k: string; v: string }) {
 export function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div className="text-center">
-      <p className="display text-[clamp(2rem,4vw,3rem)] text-primary">{value}</p>
-      <p className="label mt-3 text-foreground/60">{label}</p>
+      <p className="display text-[clamp(2.25rem,4.5vw,3.25rem)] text-primary tabular-nums">
+        {value}
+      </p>
+      {/* A short rule under the figure. Four numbers in a row with
+          nothing between them and their labels read as one drifting
+          block; this gives each of them a foot to stand on. */}
+      <span aria-hidden className="mx-auto mt-4 block h-0.5 w-8 bg-primary/40" />
+      <p className="label mt-4 text-foreground/70">{label}</p>
     </div>
   );
 }

@@ -141,9 +141,11 @@ export default async function HomePage() {
           <Heading tone="light" size="sm">
             {page.text("stats.heading")}
           </Heading>
-          <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Ruled into cells. Four figures floating in a dark band with
+              nothing between them read as one drifting row. */}
+          <div className="mt-14 grid gap-px border border-foreground/10 bg-foreground/10 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((s, i) => (
-              <Reveal key={s.label} delay={i}>
+              <Reveal key={s.label} delay={i} className="bg-card px-6 py-10">
                 <Stat value={s.value} label={s.label} />
               </Reveal>
             ))}
