@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 /* ==================================================================
@@ -21,6 +22,12 @@ export function ProductGallery({
 }) {
   const [active, setActive] = useState(0);
   const shown = images[active] ?? images[0];
+  const many = images.length > 1;
+
+  /* Wraps around rather than stopping. With four pictures there is no
+     sense in which one of them is the end. */
+  const step = (by: number) =>
+    setActive((current) => (current + by + images.length) % images.length);
 
   return (
     <div>
@@ -47,6 +54,21 @@ export function ProductGallery({
             Pack shot to follow
           </span>
         )}
+
+        {many ? (
+          <>
+            <Step side="left" onClick={() => step(-1)}>
+              <ChevronLeft className="size-5" />
+            </Step>
+            <Step side="right" onClick={() => step(1)}>
+              <ChevronRight className="size-5" />
+            </Step>
+
+            <p className="label pointer-events-none absolute bottom-4 right-4 rounded-sm bg-foreground/70 px-2 py-1 text-background">
+              {active + 1} / {images.length}
+            </p>
+          </>
+        ) : null}
       </div>
 
       {images.length > 1 ? (
@@ -79,5 +101,38 @@ export function ProductGallery({
         </ul>
       ) : null}
     </div>
+  );
+}
+
+/* ------------------------------------------------------------------
+   One of the two arrows over the main image. Faint until the picture
+   is hovered on a desktop, always there on a touch screen, where
+   there is no hover to wait for.
+   ------------------------------------------------------------------ */
+
+function Step({
+  children,
+  side,
+  onClick,
+}: {
+  children: React.ReactNode;
+  side: "left" | "right";
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={side === "left" ? "Previous image" : "Next image"}
+      className={cn(
+        "absolute top-1/2 z-10 grid size-10 -translate-y-1/2 place-items-center",
+        "bg-background/80 text-foreground backdrop-blur transition-all",
+        "hover:bg-background hover:text-primary",
+        "opacity-100 md:opacity-0 md:group-hover:opacity-100",
+        side === "left" ? "left-3" : "right-3",
+      )}
+    >
+      {children}
+    </button>
   );
 }
