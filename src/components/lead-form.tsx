@@ -27,8 +27,11 @@ const fields = [
   { name: "country", label: "Country", type: "text", half: true },
 ] as const;
 
+/* Boxed rather than a single underline. An underline field on a pale
+   band reads as a gap in the page until it is clicked; a box says
+   where to type before anyone touches it. */
 const inputClass =
-  "mt-3 w-full border-b border-border bg-transparent pb-3 text-lg text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary aria-invalid:border-red-500";
+  "mt-2.5 w-full rounded-sm border border-border bg-background px-4 py-3.5 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground hover:border-foreground/30 focus:border-primary focus:ring-2 focus:ring-primary/15 aria-invalid:border-red-500 aria-invalid:focus:ring-red-500/15";
 
 export function LeadForm({
   topic,
