@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Faq } from "@/components/faq";
 import { Newsletter } from "@/components/newsletter";
 import { ProductBanner } from "@/components/shop/product-banner";
 import { Reveal } from "@/components/reveal";
 import { Band, Button, Heading, Stat } from "@/components/ui";
 import { listProducts } from "@/lib/catalogue";
+import { serviceFaq, servicesFaq } from "@/lib/faq";
 import { serviceStats, services } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -39,6 +41,9 @@ export default async function ServicePage({
      is reading about the service. */
   const featured = await listProducts({ featuredOnly: true });
 
+  // A service with nothing of its own falls back to the general set.
+  const faq = serviceFaq[slug] ?? servicesFaq;
+
   return (
     <>
       <ProductBanner
@@ -50,7 +55,7 @@ export default async function ServicePage({
         imageAlt={service.name}
         products={featured}
         actions={[
-          { label: "Book a call", href: "/contact?topic=services" },
+          { label: "Enquire about this service", href: "/contact?topic=services" },
           { label: "Shop the range", href: "/shop", variant: "outline-light" },
         ]}
       />
@@ -67,7 +72,7 @@ export default async function ServicePage({
               </p>
             ))}
             <div className="mt-10 flex flex-wrap gap-3">
-              <Button href="/contact?topic=services">Book a call</Button>
+              <Button href="/contact?topic=services">Enquire about this service</Button>
               <Button href="/services" variant="outline">
                 All services
               </Button>
@@ -136,6 +141,10 @@ export default async function ServicePage({
             ))}
           </ul>
         </div>
+      </Band>
+
+      <Band tone="white">
+        <Faq items={faq} subhead={`About ${service.name.toLowerCase()}`} />
       </Band>
 
       <Newsletter />

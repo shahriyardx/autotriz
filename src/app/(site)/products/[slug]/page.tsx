@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { Faq } from "@/components/faq";
+import { productFaq } from "@/lib/faq";
+import { ProductBanner } from "@/components/shop/product-banner";
 import { ProductGallery } from "@/components/shop/product-gallery";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -34,11 +37,16 @@ export default async function ProductPage({
   const product = await getProduct(slug);
   if (!product) notFound();
 
-  const related = (
-    await listProducts({ categorySlugs: [product.category.slug], limit: 5 })
-  )
-    .filter((p) => p.slug !== product.slug)
-    .slice(0, 4);
+  const [inCategory, featured] = await Promise.all([
+    listProducts({ categorySlugs: [product.category.slug], limit: 5 }),
+    listProducts({ featuredOnly: true }),
+  ]);
+
+  const related = inCategory.filter((p) => p.slug !== product.slug).slice(0, 4);
+
+  /* The banner further down the page should not be a second showing of
+     the product already open. */
+  const banner = featured.filter((p) => p.slug !== product.slug);
 
   const available = inStock(product);
   const onSale =
@@ -189,6 +197,24 @@ export default async function ProductPage({
           </div>
         </Band>
       ) : null}
+
+      {banner.length ? (
+        <ProductBanner
+          title="The rest of the"
+          accent="range"
+          subhead="Coatings, compounds, preparation and after care"
+          lede="One chemistry across paint, glass, wheels and interiors — bought from the people who fit it."
+          products={banner}
+          actions={[
+            { label: "Browse the range", href: "/shop" },
+            { label: "Talk to us", href: "/contact", variant: "outline-light" },
+          ]}
+        />
+      ) : null}
+
+      <Band tone="white">
+        <Faq items={productFaq} subhead="Buying, delivery and fitting" />
+      </Band>
 
       <Newsletter />
     </>

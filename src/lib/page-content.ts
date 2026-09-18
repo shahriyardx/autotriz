@@ -75,6 +75,26 @@ export const PAGE_CONTENT: Record<string, Record<string, unknown>> = {
         { name: "Corrosion Protection", body: "A continuous, non-porous barrier keeps moisture and chloride away from the substrate underneath." },
       ],
     },
+    /* Two written blocks with a photograph each, alternating sides.
+       The homepage was a run of headings and cards with nowhere for
+       anyone to actually read about the chemistry. */
+    story: {
+      accent: "chemistry",
+      heading: "The",
+      subhead: "Why polysilazane, and why it matters on a Dhaka road",
+      items: [
+        {
+          title: "A layer, not a polish",
+          image: "/about/nano-technology.webp",
+          body: "Most protection sits **on** paint and waits to be washed off. Polysilazane converts as it cures and bonds into the clear coat, finishing as a cured 3D matrix nano structure measured above 9H.\n\nThat is the difference between a product you reapply every few months and a layer that is still there in five years. It is also why the preparation matters so much: whatever is under the coating stays under it.",
+        },
+        {
+          title: "Built for heat, dust and monsoon",
+          image: "/photo/coating-application.webp",
+          body: "A coating tested in a European winter is not tested for this. Dhaka gives paint standing heat, construction dust and months of rain carrying everything on the road with it.\n\nWater leaves a coated panel instead of drying on it, so the dust that lands leaves with the next rinse rather than being ground into the clear coat. Less washing, less polishing, less paint removed over the life of the car.",
+        },
+      ],
+    },
     certs: {
       heading: "Technology",
       accent: "Testing",
@@ -87,6 +107,11 @@ export const PAGE_CONTENT: Record<string, Record<string, unknown>> = {
       ],
       ctaLabel: "Shop the range",
       ctaHref: "/automotive-ceramic-coating",
+    },
+    faq: {
+      accent: "questions",
+      heading: "Frequently asked",
+      subhead: "Coatings, application and delivery",
     },
     services: {
       heading: "Professional application",

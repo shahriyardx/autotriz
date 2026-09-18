@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Faq } from "@/components/faq";
 import { Newsletter } from "@/components/newsletter";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 import { Band, Button, Heading, Stat } from "@/components/ui";
+import { servicesFaq } from "@/lib/faq";
 import { serviceStats, services } from "@/lib/site";
 import { getPage } from "@/lib/page-store";
 
@@ -81,7 +83,7 @@ export default async function ServicesPage() {
                   <div className="mt-8 flex flex-wrap gap-3">
                     <Button href={`/services/${s.slug}`}>Learn more</Button>
                     <Button href="/contact?topic=services" variant="outline">
-                      Book a call
+                      Enquire
                     </Button>
                   </div>
                 </div>
@@ -105,6 +107,10 @@ export default async function ServicesPage() {
             ))}
           </ul>
         </div>
+      </Band>
+
+      <Band tone="white">
+        <Faq items={servicesFaq} subhead="What people ask before they book the car in" />
       </Band>
 
       <Newsletter />

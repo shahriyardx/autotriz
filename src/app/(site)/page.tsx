@@ -1,10 +1,13 @@
 import Image from "next/image";
 import { HeroVideo } from "@/components/hero-video";
+import { Faq } from "@/components/faq";
 import { Markdown } from "@/components/markdown";
 import { Reveal } from "@/components/reveal";
 import { Newsletter } from "@/components/newsletter";
 import { Band, Button, FeatureCard, Heading, Stat } from "@/components/ui";
 import { benefitIcons } from "@/components/icons";
+import { homeFaq } from "@/lib/faq";
+import { cn } from "@/lib/cn";
 import { services } from "@/lib/site";
 import { getPage } from "@/lib/page-store";
 import Link from "next/link";
@@ -14,6 +17,7 @@ type Card = { categorySlug: string; image: string; body: string };
 type Stat = { value: string; label: string };
 type Benefit = { name: string; body: string };
 type Cert = { name: string; note: string };
+type Story = { title: string; image: string; body: string };
 
 export default async function HomePage() {
   const categories = await listCategories({ topLevelOnly: true });
@@ -25,6 +29,7 @@ export default async function HomePage() {
   const stats = page.list<Stat>("stats.items");
   const benefits = page.list<Benefit>("benefits.items");
   const certifications = page.list<Cert>("certs.items");
+  const story = page.list<Story>("story.items");
 
   return (
     <>
@@ -170,6 +175,54 @@ export default async function HomePage() {
       </Band>
 
       {/* ================================================================
+          THE CHEMISTRY
+          Two written blocks with a photograph each, alternating sides —
+          somewhere to actually read, between the cards and the numbers.
+          ================================================================ */}
+      <Band tone="white">
+        <div className="shell">
+          <Heading
+            accent={page.text("story.accent")}
+            rule
+            subhead={page.text("story.subhead")}
+          >
+            {page.text("story.heading")}
+          </Heading>
+
+          <div className="mt-16 space-y-16 md:space-y-24">
+            {story.map((block, i) => (
+              <Reveal key={block.title}>
+                <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+                  <div
+                    className={cn(
+                      "relative aspect-[4/3] w-full overflow-hidden bg-muted",
+                      i % 2 ? "lg:order-1" : "lg:order-2",
+                    )}
+                  >
+                    <Image
+                      src={block.image}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 50vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+
+                  <div className={i % 2 ? "lg:order-2" : "lg:order-1"}>
+                    <h3 className="display text-[clamp(1.375rem,2.4vw,1.875rem)]">
+                      {block.title}
+                    </h3>
+                    <span aria-hidden className="mt-6 block h-0.5 w-14 bg-primary" />
+                    <Markdown className="mt-6">{block.body}</Markdown>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </Band>
+
+      {/* ================================================================
           TECHNOLOGY TESTING
           ================================================================ */}
       <Band tone="white">
@@ -237,6 +290,15 @@ export default async function HomePage() {
             ))}
           </ul>
         </div>
+      </Band>
+
+      <Band tone="white">
+        <Faq
+          items={homeFaq}
+          heading={page.text("faq.heading")}
+          accent={page.text("faq.accent")}
+          subhead={page.text("faq.subhead")}
+        />
       </Band>
 
       <Newsletter />
