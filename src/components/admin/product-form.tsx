@@ -108,7 +108,6 @@ const formSchema = z
     taxClass: z.string().trim().min(1, "Required"),
     surface: z.string().trim().min(1, "Surface is required"),
     size: z.string().trim(),
-    featuresText: z.string(),
     shortDescription: z.string(),
     description: z.string(),
     /* Inventory */
@@ -183,12 +182,6 @@ const fromMinor = (value: number | null | undefined) =>
 
 const numOrNull = (value: string) => (value.trim() === "" ? null : Number(value));
 const textOrNull = (value: string) => (value.trim() === "" ? null : value.trim());
-const lines = (value: string) =>
-  value
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-
 /** `datetime-local` wants "YYYY-MM-DDTHH:mm" in local time. */
 function toLocalInput(date: Date | null | undefined) {
   if (!date) return "";
@@ -251,7 +244,6 @@ export function ProductForm({ product }: { product?: ProductFormProduct }) {
       taxClass: product?.taxClass ?? "standard",
       surface: product?.surface ?? "Paint",
       size: product?.size ?? "",
-      featuresText: (product?.features ?? []).join("\n"),
       shortDescription: product?.shortDescription ?? "",
       description: product?.description ?? "",
       sku: product?.sku ?? "",
@@ -341,7 +333,6 @@ export function ProductForm({ product }: { product?: ProductFormProduct }) {
       taxClass: values.taxClass,
       size: textOrNull(values.size),
       image: product?.image ?? pendingImages[0]?.url ?? null,
-      features: lines(values.featuresText),
       sku: values.sku,
       gtin: textOrNull(values.gtin),
       trackStock: values.trackStock,
@@ -655,18 +646,6 @@ export function ProductForm({ product }: { product?: ProductFormProduct }) {
                     )}
                   />
                 </div>
-
-                <Controller
-                  name="featuresText"
-                  control={form.control}
-                  render={({ field }) => (
-                    <Field>
-                      <FieldLabel htmlFor={field.name}>Feature list</FieldLabel>
-                      <Textarea id={field.name} rows={4} {...field} />
-                      <FieldDescription>One per line. Shown as bullets on the product page.</FieldDescription>
-                    </Field>
-                  )}
-                />
               </TabsContent>
 
               {/* -------------------- Inventory -------------------- */}
