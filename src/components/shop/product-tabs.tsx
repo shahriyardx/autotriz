@@ -6,19 +6,10 @@ import type { Product } from "@/lib/catalogue";
 import { cn } from "@/lib/cn";
 import { Markdown } from "@/components/markdown";
 
-const application = [
-  "Wash and decontaminate. Iron fallout, tar and old protection all have to come off first.",
-  "Correct the paint if it needs it — a coating locks in whatever is underneath.",
-  "Panel wipe and dry completely. The surface must be bare before the coating touches it.",
-  "Apply one section at a time in a crosshatch, then level within the flash window.",
-  "Keep the panel dry for 24 hours while the matrix cures.",
-];
-
 export function ProductTabs({ product }: { product: Product }) {
   const tabs = [
     { id: "description", label: "Description" },
     { id: "specification", label: "Specification" },
-    { id: "application", label: "How to use" },
     { id: "documents", label: "Documents" },
   ] as const;
 
@@ -94,19 +85,6 @@ export function ProductTabs({ product }: { product: Product }) {
               </div>
             ))}
           </dl>
-        ) : null}
-
-        {active === "application" ? (
-          <ol className="space-y-4">
-            {application.map((step, i) => (
-              <li key={step} className="flex gap-5">
-                <span className="display shrink-0 text-lg text-primary">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="pt-1 leading-relaxed text-foreground/75">{step}</span>
-              </li>
-            ))}
-          </ol>
         ) : null}
 
         {active === "documents" ? (
