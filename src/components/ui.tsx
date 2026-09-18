@@ -115,20 +115,26 @@ export function Button({
     <Link
       {...props}
       className={cn(
-        "label group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-sm transition-colors duration-300",
+        /* A *named* group. `group-hover` matches any ancestor carrying
+           `group`, so an unnamed one here meant a card that is itself a
+           group slid the button's fill up whenever the card was hovered
+           — on an outline button that left dark text on a dark fill,
+           unreadable, without the pointer ever being near it. */
+        "label group/btn relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-sm transition-colors duration-300",
         size === "md" && "px-8 py-4",
         size === "lg" && "px-10 py-5",
         variant === "primary" && "bg-primary text-primary-foreground hover:text-primary-foreground",
-        variant === "outline" && "border-2 border-foreground text-foreground hover:text-background",
+        variant === "outline" &&
+          "border-2 border-foreground text-foreground group-hover/btn:text-background",
         variant === "outline-light" &&
-          "border-2 border-foreground/40 text-foreground hover:border-primary hover:text-primary-foreground",
+          "border-2 border-foreground/40 text-foreground group-hover/btn:border-primary group-hover/btn:text-primary-foreground",
         className,
       )}
     >
       <span
         aria-hidden
         className={cn(
-          "absolute inset-0 -z-0 translate-y-full transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0",
+          "absolute inset-0 -z-0 translate-y-full transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-y-0",
           variant === "primary" && "bg-foreground",
           variant === "outline" && "bg-foreground",
           variant === "outline-light" && "bg-primary",
@@ -137,7 +143,7 @@ export function Button({
       <span
         className={cn(
           "relative",
-          variant === "primary" && "group-hover:text-primary dark:group-hover:text-background",
+          variant === "primary" && "group-hover/btn:text-primary dark:group-hover/btn:text-background",
         )}
       >
         {children}
@@ -145,8 +151,8 @@ export function Button({
       <span
         aria-hidden
         className={cn(
-          "relative transition-transform duration-300 group-hover:translate-x-1",
-          variant === "primary" && "group-hover:text-primary dark:group-hover:text-background",
+          "relative transition-transform duration-300 group-hover/btn:translate-x-1",
+          variant === "primary" && "group-hover/btn:text-primary dark:group-hover/btn:text-background",
         )}
       >
         →
