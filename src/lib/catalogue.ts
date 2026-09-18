@@ -1,7 +1,7 @@
 import "server-only";
 import { and, asc, desc, eq, exists, gte, ilike, inArray, lte, or, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { categories, productCategories, products } from "@/db/schema";
+import { categories, productCategories, productImages, products } from "@/db/schema";
 import type { SortKey } from "@/lib/shop-search";
 
 /* ------------------------------------------------------------------
@@ -358,7 +358,11 @@ export async function listProducts(query: ProductQuery = {}): Promise<Product[]>
   return rows.map((row) => toProduct(row));
 }
 
-export async function getProduct(slug: string): Promise<Product | null> {
+/** A product with every picture attached to it, for its own page. The
+ *  listings only ever need the main shot, so they do not pay for this. */
+export type ProductDetail = Product & { gallery: { url: string; alt: string }[] };
+
+export async function getProduct(slug: string): Promise<ProductDetail | null> {
   const [row] = await db
     .select(selection)
     .from(products)
@@ -366,7 +370,31 @@ export async function getProduct(slug: string): Promise<Product | null> {
     .where(and(eq(products.slug, slug), eq(products.active, true)))
     .limit(1);
 
-  return row ? toProduct(row) : null;
+  if (!row) return null;
+  const product = toProduct(row);
+
+  const extra = await db
+    .select({ url: productImages.url, alt: productImages.alt })
+    .from(productImages)
+    .where(eq(productImages.productId, row.id))
+    .orderBy(asc(productImages.sortOrder));
+
+  /* The main shot leads, then everything else. The same file is often
+     in both places, so the list is deduplicated by URL rather than
+     showing the pack shot twice. */
+  const seen = new Set<string>();
+  const gallery: { url: string; alt: string }[] = [];
+
+  for (const image of [
+    ...(product.image ? [{ url: product.image, alt: product.name }] : []),
+    ...extra.map((image) => ({ url: image.url, alt: image.alt ?? product.name })),
+  ]) {
+    if (seen.has(image.url)) continue;
+    seen.add(image.url);
+    gallery.push(image);
+  }
+
+  return { ...product, gallery };
 }
 
 export type CategoryNode = Category & { productCount: number; children: CategoryNode[] };

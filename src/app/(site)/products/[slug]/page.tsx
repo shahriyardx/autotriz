@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { ProductGallery } from "@/components/shop/product-gallery";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCart } from "@/components/add-to-cart";
@@ -87,28 +87,7 @@ export default async function ProductPage({
           <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:gap-16">
             {/* --- gallery --- */}
             <div className="lg:col-span-7">
-              <div className="group relative aspect-square overflow-hidden">
-                {onSale ? (
-                  <span className="label absolute left-4 top-4 z-10 rounded-sm bg-primary px-2.5 py-1.5 text-primary-foreground">
-                    Sale
-                  </span>
-                ) : null}
-                {product.image ? (
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={1200}
-                    height={1200}
-                    priority
-                    sizes="(min-width: 1024px) 55vw, 100vw"
-                    className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
-                  />
-                ) : (
-                  <span className="label absolute inset-0 flex items-center justify-center text-muted-foreground">
-                    Pack shot to follow
-                  </span>
-                )}
-              </div>
+              <ProductGallery images={product.gallery} onSale={onSale} />
             </div>
 
             {/* --- buy box --- */}
