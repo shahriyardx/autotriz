@@ -12,9 +12,9 @@ export function ProductGrid({
   if (!items.length) {
     return (
       <div className="border border-dashed border-border py-24 text-center">
-        <p className="display text-xl">Nothing matches those filters</p>
+        <p className="display text-xl">Nothing here yet</p>
         <p className="mt-3 text-sm text-foreground/75">
-          Try widening the price range or clearing a filter.
+          Please check back shortly.
         </p>
       </div>
     );

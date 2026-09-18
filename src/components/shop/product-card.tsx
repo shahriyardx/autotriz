@@ -58,7 +58,7 @@ export function ProductCard({
       <div className="flex flex-1 flex-col p-5 text-center">
         <p className="label text-muted-foreground">{product.category.name}</p>
 
-        <h3 className="display mt-3 text-base leading-snug">
+        <h3 className="display mt-3 line-clamp-2 min-h-[2.5rem] text-base leading-snug">
           <Link
             href={`/products/${product.slug}`}
             className="transition-colors hover:text-primary"
@@ -86,8 +86,11 @@ export function ProductCard({
           <p className="label mt-3 text-primary">Only {product.stock} left</p>
         ) : null}
 
-        {/* Sits above the card-wide link overlay so the click lands here. */}
-        <div className="relative z-10 mt-5 pt-1">
+        {/* `mt-auto` puts this on the floor of the card, so the buttons
+            line up across a row however tall the names above them run.
+            The z-index lifts it over the card-wide link overlay, so the
+            click lands on the button and not the product page. */}
+        <div className="relative z-10 mt-auto pt-5">
           <QuickAdd
             product={{
               slug: product.slug,
