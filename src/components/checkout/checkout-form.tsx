@@ -11,8 +11,7 @@ import { Loader2, Lock } from "lucide-react";
 import { api } from "@/trpc/react";
 import { useCart } from "@/components/cart/cart-context";
 import { checkoutInput, PAYMENT_METHODS } from "@/lib/checkout";
-import { COUNTRY } from "@/lib/bangladesh";
-import { formatPrice } from "@/lib/shop-config";
+import { COUNTRY, formatPrice } from "@/lib/shop-config";
 import { Button } from "@/components/ui-kit/button";
 import { Checkbox } from "@/components/ui-kit/checkbox";
 import {
@@ -24,13 +23,6 @@ import {
 } from "@/components/ui-kit/field";
 import { Input } from "@/components/ui-kit/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui-kit/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui-kit/select";
 import { Textarea } from "@/components/ui-kit/textarea";
 
 /* ==================================================================
@@ -78,10 +70,10 @@ export function CheckoutForm({
         region: defaults.address?.region ?? "",
         city: defaults.address?.city ?? "",
         postcode: defaults.address?.postcode ?? "",
-        country: defaults.address?.country ?? COUNTRY,
+        country: COUNTRY,
       },
       billingSameAsShipping: true,
-      billing: undefined,
+      billing: { name: "", line1: "", region: "", city: "", country: COUNTRY },
       notes: "",
       paymentMethod: "cod",
       createAccount: false,
@@ -415,21 +407,16 @@ function AddressFields({
         />
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <TextField
-          control={control}
-          name={`${prefix}.postcode` as Name}
-          label="Post code"
-          optional
-          autoComplete="postal-code"
-        />
-        <TextField
-          control={control}
-          name={`${prefix}.country` as Name}
-          label="Country"
-          autoComplete="country-name"
-        />
-      </div>
+      {/* Country is not asked for: the shop delivers within Bangladesh
+          and nowhere else. It is still sent with the address, so the
+          order records where it went. */}
+      <TextField
+        control={control}
+        name={`${prefix}.postcode` as Name}
+        label="Post code"
+        optional
+        autoComplete="postal-code"
+      />
     </FieldGroup>
   );
 }

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { COUNTRY } from "@/lib/shop-config";
 
 /* Shared between the checkout form and the server that trusts none of
    it. Free of database imports so the browser can use the same rules. */
@@ -13,7 +14,10 @@ export const addressInput = z.object({
   /** Upazila or thana — the smallest unit a courier needs. */
   city: z.string().trim().min(2, "Enter the upazila or thana"),
   postcode: z.string().trim().optional().or(z.literal("")),
-  country: z.string().trim().min(2, "Enter the country"),
+  /* Never asked for: the shop delivers within Bangladesh and nowhere
+     else, so no form carries the field. It is still on the address, so
+     an order records where it went rather than assuming it forever. */
+  country: z.string().trim().min(2).default(COUNTRY),
 });
 
 export type AddressInput = z.infer<typeof addressInput>;

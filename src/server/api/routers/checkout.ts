@@ -8,7 +8,6 @@ import { auth } from "@/lib/auth";
 import { getProduct, inStock } from "@/lib/catalogue";
 import { checkoutInput, shippingFor } from "@/lib/checkout";
 import { FREE_SHIPPING_THRESHOLD, currency } from "@/lib/shop-config";
-import { site } from "@/lib/site";
 import type { Address } from "@/db/schema";
 
 /* ==================================================================

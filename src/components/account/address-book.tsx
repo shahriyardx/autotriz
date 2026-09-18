@@ -8,14 +8,18 @@ import { Loader2, MapPin, Plus, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/trpc/react";
 import { addressInput } from "@/lib/checkout";
-import { COUNTRY } from "@/lib/bangladesh";
+import { COUNTRY } from "@/lib/shop-config";
 import { cn } from "@/lib/cn";
 
 /* The customer's saved delivery addresses. One is the default, which is
    what the checkout fills in for them. */
 
 const schema = z.object({ label: z.string().trim().max(60).optional(), address: addressInput });
-type Values = z.infer<typeof schema>;
+
+/* What the fields hold while typing. `country` carries a default, so on
+   the way in it is optional and on the way out it is not — the form
+   must be typed from the input side or the resolver disagrees with it. */
+type Values = z.input<typeof schema>;
 
 const inputClass =
   "mt-3 w-full border-b border-border bg-transparent pb-3 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary";
@@ -223,10 +227,7 @@ function AddressForm({
         {field("address.city", "Upazila / thana")}
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        {field("address.postcode", "Post code", true)}
-        {field("address.country", "Country")}
-      </div>
+      {field("address.postcode", "Post code", true)}
 
       <div className="flex gap-3 pt-2">
         <button
