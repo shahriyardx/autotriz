@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Newsletter } from "@/components/newsletter";
-import { PageHero } from "@/components/page-hero";
+import { ProductBanner } from "@/components/shop/product-banner";
 import { Reveal } from "@/components/reveal";
 import { Band, Button, Heading, Stat } from "@/components/ui";
+import { listProducts } from "@/lib/catalogue";
 import { serviceStats, services } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -34,15 +35,24 @@ export default async function ServicePage({
   const others = services.filter((s) => s.slug !== slug);
   const [first, ...rest] = service.name.split(" ");
 
+  /* The chemistry the service is carried out with, in front of whoever
+     is reading about the service. */
+  const featured = await listProducts({ featuredOnly: true });
+
   return (
     <>
-      <PageHero
+      <ProductBanner
         title={first}
         accent={rest.join(" ") || undefined}
         subhead={service.short}
         lede={service.lede}
         image={service.image}
         imageAlt={service.name}
+        products={featured}
+        actions={[
+          { label: "Book a call", href: "/contact?topic=services" },
+          { label: "Shop the range", href: "/shop", variant: "outline-light" },
+        ]}
       />
 
       <Band tone="white">

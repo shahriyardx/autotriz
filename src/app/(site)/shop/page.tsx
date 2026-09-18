@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Newsletter } from "@/components/newsletter";
 import { ProductGrid } from "@/components/shop/product-grid";
-import { ShopBanner } from "@/components/shop/shop-banner";
+import { ProductBanner } from "@/components/shop/product-banner";
 import { Band } from "@/components/ui";
 import { listProducts } from "@/lib/catalogue";
 import { getPage } from "@/lib/page-store";
@@ -38,7 +38,7 @@ export default async function ShopPage() {
 
   return (
     <>
-      <ShopBanner
+      <ProductBanner
         title={page.text("hero.title")}
         accent={page.text("hero.accent")}
         subhead={page.text("hero.subhead")}
