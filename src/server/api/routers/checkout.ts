@@ -1,7 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
-import Stripe from "stripe";
 import { customerAddresses, orderItems, orders } from "@/db/schema";
 import { user } from "@/db/auth-schema";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
@@ -150,8 +149,6 @@ export const checkoutRouter = createTRPCRouter({
       : toAddress(input.billing ?? input.shipping);
 
     const number = await nextOrderNumber(ctx.db);
-    const wantsCard = input.paymentMethod === "card" && Boolean(process.env.STRIPE_SECRET_KEY);
-
     const order = await ctx.db.transaction(async (tx) => {
       const [row] = await tx
         .insert(orders)
@@ -169,7 +166,7 @@ export const checkoutRouter = createTRPCRouter({
           shippingAddress,
           billingAddress,
           notes: input.notes || null,
-          paymentMethod: wantsCard ? "card" : input.paymentMethod === "card" ? "cod" : input.paymentMethod,
+          paymentMethod: input.paymentMethod,
           paymentStatus: "unpaid",
         })
         .returning();
@@ -197,53 +194,7 @@ export const checkoutRouter = createTRPCRouter({
       return row;
     });
 
-    /* ---- card payments hand over to Stripe ---- */
-    if (wantsCard) {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-      const base = (process.env.BETTER_AUTH_URL ?? site.url).replace(/\/$/, "");
-
-      const session = await stripe.checkout.sessions.create({
-        mode: "payment",
-        customer_email: email,
-        client_reference_id: order.id,
-        line_items: [
-          ...lines.map(({ product, quantity }) => ({
-            quantity,
-            price_data: {
-              currency: currency.code.toLowerCase(),
-              unit_amount: product.price,
-              product_data: {
-                name: product.name,
-                description: product.size ? `${product.sku} · ${product.size}` : product.sku,
-              },
-            },
-          })),
-          ...(shipping
-            ? [
-                {
-                  quantity: 1,
-                  price_data: {
-                    currency: currency.code.toLowerCase(),
-                    unit_amount: shipping,
-                    product_data: { name: "Delivery" },
-                  },
-                },
-              ]
-            : []),
-        ],
-        success_url: `${base}/order/${order.number}?paid=1`,
-        cancel_url: `${base}/checkout`,
-      });
-
-      await ctx.db
-        .update(orders)
-        .set({ stripeSessionId: session.id })
-        .where(eq(orders.id, order.id));
-
-      return { number: order.number, redirectTo: session.url };
-    }
-
-    return { number: order.number, redirectTo: null };
+    return { number: order.number };
   }),
 
   /** The confirmation page. A guest may read their own order with the

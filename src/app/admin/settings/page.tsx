@@ -14,8 +14,8 @@ export default async function AdminSettingsPage() {
     { k: "Currency", v: currency.code },
     { k: "Free delivery over", v: formatPrice(FREE_SHIPPING_THRESHOLD) },
     {
-      k: "Card payments",
-      v: process.env.STRIPE_SECRET_KEY ? "Stripe key present" : "No Stripe key set",
+      k: "Payment",
+      v: "Cash on delivery and bank transfer",
     },
   ];
 

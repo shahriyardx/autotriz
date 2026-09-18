@@ -132,22 +132,6 @@ export default async function AdminOrderPage({
               )}
             </CardContent>
           </Card>
-
-          {order.stripeSessionId ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-1 text-xs text-muted-foreground">
-                <p className="break-all">Session: {order.stripeSessionId}</p>
-                {order.stripePaymentIntentId ? (
-                  <p className="break-all">
-                    Intent: {order.stripePaymentIntentId}
-                  </p>
-                ) : null}
-              </CardContent>
-            </Card>
-          ) : null}
         </div>
       </div>
     </div>

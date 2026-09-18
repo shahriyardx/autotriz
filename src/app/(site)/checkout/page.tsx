@@ -42,7 +42,6 @@ export default async function CheckoutPage() {
       <div className="shell py-16 md:py-20">
         <CheckoutForm
           signedIn={Boolean(account)}
-          cardEnabled={Boolean(process.env.STRIPE_SECRET_KEY)}
           defaults={{
             email: account?.email ?? "",
             name: account?.name ?? "",

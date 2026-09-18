@@ -35,7 +35,7 @@ export const checkoutInput = z
     billingSameAsShipping: z.boolean().default(true),
     billing: addressInput.optional(),
     notes: z.string().trim().max(2000).optional().or(z.literal("")),
-    paymentMethod: z.enum(["cod", "bank", "card"]).default("cod"),
+    paymentMethod: z.enum(["cod", "bank"]).default("cod"),
     /** Guests may open an account as they check out. */
     createAccount: z.boolean().default(false),
     password: z.string().optional().or(z.literal("")),
@@ -74,10 +74,5 @@ export const PAYMENT_METHODS = [
     value: "bank",
     label: "Bank transfer",
     description: "We send account details with your confirmation.",
-  },
-  {
-    value: "card",
-    label: "Card payment",
-    description: "Pay now by card through Stripe.",
   },
 ] as const;

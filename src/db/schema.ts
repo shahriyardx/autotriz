@@ -259,6 +259,11 @@ export const orders = pgTable(
     paymentMethod: text("payment_method").$type<PaymentMethod>().notNull().default("cod"),
     paymentStatus: text("payment_status").$type<PaymentStatus>().notNull().default("unpaid"),
     shippingMethod: text("shipping_method"),
+    /* Left from a card-payment integration that was removed. The shop
+       takes cash on delivery and bank transfer, and is not going back,
+       so nothing reads or writes these — they stay only because
+       dropping a column from a live orders table is not worth doing
+       for two nulls. */
     stripeSessionId: text("stripe_session_id"),
     stripePaymentIntentId: text("stripe_payment_intent_id"),
     notes: text("notes"),
@@ -286,7 +291,7 @@ export type Address = {
   country: string;
 };
 
-export const paymentMethods = ["cod", "bank", "card"] as const;
+export const paymentMethods = ["cod", "bank"] as const;
 export type PaymentMethod = (typeof paymentMethods)[number];
 
 export const paymentStatuses = ["unpaid", "paid", "refunded"] as const;

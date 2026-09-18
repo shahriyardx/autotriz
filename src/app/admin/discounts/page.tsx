@@ -20,9 +20,8 @@ export default async function AdminDiscountsPage() {
 
       <div className="rounded-lg border bg-background p-10 text-center">
         <p className="text-sm text-muted-foreground">
-          The discounts table exists and is ready. Creating codes and applying
-          them at checkout is the next piece of work — it needs the Stripe
-          checkout flow live first, so a code has something to discount.
+          The discounts table exists and is ready. Creating codes and
+          applying them to an order total is the next piece of work.
         </p>
       </div>
     </div>

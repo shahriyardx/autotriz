@@ -47,7 +47,6 @@ type Name = FieldPath<Values>;
 export function CheckoutForm({
   signedIn,
   defaults,
-  cardEnabled,
 }: {
   signedIn: boolean;
   defaults: {
@@ -56,7 +55,6 @@ export function CheckoutForm({
     phone: string;
     address: Partial<Values["shipping"]> | null;
   };
-  cardEnabled: boolean;
 }) {
   const router = useRouter();
   const { items, clear, ready } = useCart();
@@ -93,11 +91,7 @@ export function CheckoutForm({
   });
 
   const place = api.checkout.place.useMutation({
-    onSuccess: ({ number, redirectTo }) => {
-      if (redirectTo) {
-        window.location.href = redirectTo;
-        return;
-      }
+    onSuccess: ({ number }) => {
       clear();
       router.push(`/order/${number}`);
     },
@@ -263,7 +257,7 @@ export function CheckoutForm({
               control={control}
               render={({ field }) => (
                 <RadioGroup value={field.value} onValueChange={field.onChange} className="gap-3">
-                  {PAYMENT_METHODS.filter((m) => m.value !== "card" || cardEnabled).map((option) => (
+                  {PAYMENT_METHODS.map((option) => (
                     <FieldLabel key={option.value} htmlFor={`pay-${option.value}`}>
                       <Field orientation="horizontal">
                         <RadioGroupItem id={`pay-${option.value}`} value={option.value} />
@@ -353,7 +347,7 @@ export function CheckoutForm({
             className="mt-8 w-full"
           >
             {place.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
-            {method === "card" ? "Pay by card" : "Place order"}
+            Place order
           </Button>
 
           <p className="mt-4 text-xs text-muted-foreground">
