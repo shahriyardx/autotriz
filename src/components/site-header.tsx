@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FocusEvent } from "react";
 import { ShieldCheck } from "lucide-react";
 import { CartButton } from "@/components/cart/cart-button";
 import { type HeaderEntry } from "@/lib/site";
@@ -21,6 +21,19 @@ export function SiteHeader({
 }) {
   const [open, setOpen] = useState<string | null>(null);
   const [drawer, setDrawer] = useState(false);
+
+  /* Opening on focus is what lets the menus work from the keyboard.
+     But returning to the tab restores focus to whatever held it last,
+     and that fires a focus event too — so a nav item that had been
+     clicked reopened its menu every time the tab came back.
+
+     `:focus-visible` is the browser's own judgement of whether focus
+     ought to be shown: true when it arrived by keyboard, false when it
+     is merely being restored. */
+  const openOnKeyboardFocus = (name: string | null) => (event: FocusEvent<HTMLElement>) => {
+    if (!event.target.matches(":focus-visible")) return;
+    setOpen(name);
+  };
 
   const close = () => {
     setDrawer(false);
@@ -125,7 +138,7 @@ export function SiteHeader({
                   key={entry.name}
                   href={entry.href}
                   onMouseEnter={() => setOpen(entry.items ? entry.name : null)}
-                  onFocus={() => setOpen(entry.items ? entry.name : null)}
+                  onFocus={openOnKeyboardFocus(entry.items ? entry.name : null)}
                   onClick={close}
                   aria-expanded={entry.items ? open === entry.name : undefined}
                   className={className}
@@ -137,7 +150,7 @@ export function SiteHeader({
                   key={entry.name}
                   type="button"
                   onMouseEnter={() => setOpen(entry.name)}
-                  onFocus={() => setOpen(entry.name)}
+                  onFocus={openOnKeyboardFocus(entry.name)}
                   onClick={() => setOpen(open === entry.name ? null : entry.name)}
                   aria-expanded={open === entry.name}
                   className={className}
