@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCart, type AddableProduct } from "@/components/cart/cart-context";
+import { Button } from "@/components/ui";
 import { cn } from "@/lib/cn";
 
 export function AddToCart({
@@ -38,20 +39,14 @@ export function AddToCart({
         </button>
       </div>
 
-      <button
-        type="button"
-        disabled={disabled}
+      <Button
+        variant="solid"
         onClick={() => add(product, quantity)}
-        className="label group/btn relative inline-flex flex-1 items-center justify-center gap-3 overflow-hidden rounded-sm bg-foreground px-8 py-4 text-background disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none"
+        disabled={disabled}
+        className="flex-1 sm:flex-none"
       >
-        <span
-          aria-hidden
-          className="absolute inset-0 translate-y-full bg-primary transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-y-0 group-disabled/btn:translate-y-full"
-        />
-        <span className="relative transition-colors group-hover/btn:text-primary-foreground group-hover/btn:delay-300">
-          {disabled ? "Out of stock" : "Add to cart"}
-        </span>
-      </button>
+        {disabled ? "Out of stock" : "Add to cart"}
+      </Button>
     </div>
   );
 }
@@ -67,17 +62,19 @@ export function QuickAdd({
   const { add } = useCart();
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="solid"
+      size="sm"
       disabled={disabled}
       onClick={(event) => {
+        // The whole card is a link to the product.
         event.preventDefault();
         event.stopPropagation();
         add(product, 1);
       }}
-      className="label w-full rounded-sm bg-foreground px-4 py-3 text-background transition-colors hover:bg-primary hover:text-primary-foreground disabled:cursor-not-allowed disabled:bg-border disabled:text-muted-foreground"
+      className="w-full"
     >
       {disabled ? "Out of stock" : "Add to cart"}
-    </button>
+    </Button>
   );
 }

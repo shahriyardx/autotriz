@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui";
 import { useEffect } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import { formatPrice } from "@/lib/shop-config";
@@ -144,17 +145,15 @@ export function CartDrawer() {
             <p className="mt-2 text-xs text-muted-foreground">
               Shipping and tax are calculated at checkout.
             </p>
-            <Link
+            <Button
               href="/cart"
+              variant="solid"
+              size="lg"
               onClick={() => setOpen(false)}
-              className="label group/btn relative mt-6 flex items-center justify-center gap-3 overflow-hidden bg-foreground px-6 py-5 text-background"
+              className="mt-6 w-full"
             >
-              <span
-                aria-hidden
-                className="absolute inset-0 translate-y-full bg-primary transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-y-0"
-              />
-              <span className="relative transition-colors group-hover/btn:text-primary-foreground group-hover/btn:delay-300">Review and check out</span>
-            </Link>
+              Review and check out
+            </Button>
           </footer>
         ) : null}
       </aside>

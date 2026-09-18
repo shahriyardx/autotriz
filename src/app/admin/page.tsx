@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, Inbox, Package, ShoppingCart } from "lucide-react";
+import { Inbox, Package, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui-kit/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui-kit/card";
 import {

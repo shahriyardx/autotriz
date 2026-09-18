@@ -94,93 +94,108 @@ export function Heading({
 }
 
 /* --- Button --------------------------------------------------------
-   Solid primary is the primary call to action, matching the utility
-   bar. Outline variants exist for both band tones.                    */
+   One button for the whole site: a link when it is given an `href`, a
+   real <button> otherwise, so a call to action and a form submit are
+   not two different pieces of code that drift apart.
 
-type ButtonProps = {
-  variant?: "primary" | "outline" | "outline-light";
-  size?: "md" | "lg";
+   Hover is a colour change and nothing else. It used to fill by
+   sliding a panel up behind the label, which meant the label and the
+   background were briefly disagreeing about which state they were in —
+   and depending on the variant that left dark text on dark, or light
+   on light, or the accent washed out on white. A background and a
+   colour moving together over the same 200ms cannot land in any of
+   those states.
+   ------------------------------------------------------------------ */
+
+export type ButtonVariant = "primary" | "solid" | "outline" | "outline-light";
+export type ButtonSize = "sm" | "md" | "lg";
+
+const VARIANTS: Record<ButtonVariant, string> = {
+  /** Accent, going to ink. The usual call to action. */
+  primary: "bg-primary text-primary-foreground hover:bg-foreground hover:text-background",
+  /** Ink, going to accent. Carries the weight where the accent is
+   *  already doing something else on the page — add to cart, checkout. */
+  solid: "bg-foreground text-background hover:bg-primary hover:text-primary-foreground",
+  /** Quiet on a pale band until it is pointed at. */
+  outline:
+    "border-2 border-foreground text-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground",
+  /** The same, for a dark band, where a full-strength border shouts. */
+  "outline-light":
+    "border-2 border-foreground/40 text-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground",
+};
+
+const SIZES: Record<ButtonSize, string> = {
+  sm: "px-4 py-2.5",
+  md: "px-8 py-4",
+  lg: "px-10 py-5",
+};
+
+export function buttonClass({
+  variant = "primary",
+  size = "md",
+  className,
+}: {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  className?: string;
+} = {}) {
+  return cn(
+    "label inline-flex items-center justify-center gap-3 rounded-sm transition-colors duration-200",
+    "disabled:cursor-not-allowed disabled:opacity-50",
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+    SIZES[size],
+    VARIANTS[variant],
+    className,
+  );
+}
+
+type CommonProps = {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  /** The trailing arrow. On by default for a link, off for an action. */
+  arrow?: boolean;
   className?: string;
   children: ReactNode;
-} & ComponentProps<typeof Link>;
+};
 
 export function Button({
   variant = "primary",
   size = "md",
+  arrow,
   className,
   children,
   ...props
-}: ButtonProps) {
-  return (
-    <Link
-      {...props}
-      className={cn(
-        /* A *named* group. `group-hover` matches any ancestor carrying
-           `group`, so an unnamed one here meant a card that is itself a
-           group slid the button's fill up whenever the card was hovered
-           — on an outline button that left dark text on a dark fill,
-           unreadable, without the pointer ever being near it. */
-        "label group/btn relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-sm transition-colors duration-300",
-        size === "md" && "px-8 py-4",
-        size === "lg" && "px-10 py-5",
-        variant === "primary" && "bg-primary text-primary-foreground",
-        /* Outline buttons fill with the accent and keep their dark
-           label, which is the solid button's own colour pairing. The
-           label never changes on a light band, so there is no moment
-           where the text and the background are fighting — and unlike
-           accent-on-white, the result is actually readable. */
-        variant === "outline" &&
-          "border-2 border-foreground text-foreground hover:border-primary hover:bg-primary",
-        variant === "outline-light" &&
-          "border-2 border-foreground/40 text-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground",
-        className,
-      )}
-    >
-      {/* Only the solid button fills: it starts on the accent, so the
-          panel sliding up behind the label has somewhere to go. */}
-      {variant === "primary" ? (
-        <span
-          aria-hidden
-          className="absolute inset-0 -z-0 translate-y-full bg-foreground transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-y-0"
-        />
+}: CommonProps &
+  (
+    | ({ href: ComponentProps<typeof Link>["href"] } & Omit<ComponentProps<typeof Link>, "href">)
+    | ({ href?: undefined } & ComponentProps<"button">)
+  )) {
+  const body = (
+    <>
+      {children}
+      {arrow ?? "href" in props ? (
+        <span aria-hidden className="text-[1.1em] leading-none">
+          →
+        </span>
       ) : null}
-      {/* On the solid button the label waits for the fill. Its colour
-          alone takes 150ms and the panel takes 400ms, so flipping it
-          early turns the text the accent colour while the accent is
-          still the background behind it. Nothing on the way out, where
-          the colour it returns to is the safe one. */}
-      <span
-        className={cn(
-          "relative transition-colors",
-          /* `background` is the opposite of `foreground` in either
-             palette, and the fill is `foreground` — so this is white on
-             ink on a pale page and ink on white inside a dark band,
-             without a second rule for the dark case. The accent was the
-             wrong choice here: yellow on ink is dim next to the label
-             it replaces. */
-          variant === "primary" &&
-            "group-hover/btn:text-background group-hover/btn:delay-300",
-        )}
-      >
-        {children}
-      </span>
-      <span
-        aria-hidden
-        className={cn(
-          "relative transition-[transform,color] duration-300 group-hover/btn:translate-x-1",
-          /* `background` is the opposite of `foreground` in either
-             palette, and the fill is `foreground` — so this is white on
-             ink on a pale page and ink on white inside a dark band,
-             without a second rule for the dark case. The accent was the
-             wrong choice here: yellow on ink is dim next to the label
-             it replaces. */
-          variant === "primary" &&
-            "group-hover/btn:text-background group-hover/btn:delay-300",
-        )}
-      >
-        →
-      </span>
-    </Link>
+    </>
+  );
+
+  const classes = buttonClass({ variant, size, className });
+
+  if ("href" in props && props.href !== undefined) {
+    return (
+      <Link {...(props as ComponentProps<typeof Link>)} className={classes}>
+        {body}
+      </Link>
+    );
+  }
+
+  const { type = "button", ...rest } = props as ComponentProps<"button">;
+  return (
+    <button {...rest} type={type} className={classes}>
+      {body}
+    </button>
   );
 }
 

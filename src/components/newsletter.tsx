@@ -3,8 +3,9 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { Field, FieldError } from "@/components/ui-kit/field";
+import { Button } from "@/components/ui";
 
 const formSchema = z.object({
   email: z.email("Enter a valid email address"),
@@ -94,14 +95,14 @@ export function Newsletter() {
                         className="w-full border border-foreground/20 bg-background/40 px-5 py-4 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary aria-invalid:border-red-500 sm:border-r-0"
                         {...field}
                       />
-                      <button
+                      <Button
                         type="submit"
+                        arrow
                         disabled={form.formState.isSubmitting}
-                        className="label group inline-flex shrink-0 items-center justify-center gap-2.5 bg-primary px-8 py-4 text-primary-foreground transition-colors hover:bg-foreground hover:text-primary disabled:opacity-50"
+                        className="shrink-0 rounded-none"
                       >
                         {form.formState.isSubmitting ? "Sending…" : "Subscribe"}
-                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                      </button>
+                      </Button>
                     </div>
 
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

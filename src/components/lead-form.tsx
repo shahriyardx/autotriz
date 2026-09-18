@@ -4,6 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Field, FieldError } from "@/components/ui-kit/field";
+import { Button } from "@/components/ui";
 import { cn } from "@/lib/cn";
 
 const formSchema = z.object({
@@ -138,19 +139,9 @@ export function LeadForm({
       ) : null}
 
       <div className="sm:col-span-2">
-        <button
-          type="submit"
-          disabled={form.formState.isSubmitting}
-          className="label group/btn relative inline-flex items-center gap-3 overflow-hidden rounded-sm bg-foreground px-8 py-5 text-background disabled:opacity-50"
-        >
-          <span
-            aria-hidden
-            className="absolute inset-0 translate-y-full bg-primary transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:translate-y-0 group-disabled/btn:translate-y-full"
-          />
-          <span className="relative transition-colors group-hover/btn:text-primary-foreground group-hover/btn:delay-300">
-            {form.formState.isSubmitting ? "Sending…" : submitLabel}
-          </span>
-        </button>
+        <Button type="submit" variant="solid" size="lg" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? "Sending…" : submitLabel}
+        </Button>
         <p className="mt-5 max-w-md text-xs text-muted-foreground">
           We use these details only to answer your enquiry. Nothing is passed to
           third parties.
