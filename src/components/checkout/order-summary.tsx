@@ -24,7 +24,6 @@ type Item = { id: string; name: string; sku: string; unitPrice: number; quantity
 
 const PAYMENT_LABELS: Record<PaymentMethod, string> = {
   cod: "Cash on delivery",
-  bank: "Bank transfer",
 };
 
 export function OrderSummary({ order, items }: { order: Order; items: Item[] }) {

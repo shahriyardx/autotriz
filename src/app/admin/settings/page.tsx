@@ -15,7 +15,7 @@ export default async function AdminSettingsPage() {
     { k: "Free delivery over", v: formatPrice(FREE_SHIPPING_THRESHOLD) },
     {
       k: "Payment",
-      v: "Cash on delivery and bank transfer",
+      v: "Cash on delivery",
     },
   ];
 

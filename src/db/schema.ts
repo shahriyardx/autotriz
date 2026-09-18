@@ -291,7 +291,7 @@ export type Address = {
   country: string;
 };
 
-export const paymentMethods = ["cod", "bank"] as const;
+export const paymentMethods = ["cod"] as const;
 export type PaymentMethod = (typeof paymentMethods)[number];
 
 export const paymentStatuses = ["unpaid", "paid", "refunded"] as const;

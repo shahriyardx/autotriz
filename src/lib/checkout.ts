@@ -39,7 +39,7 @@ export const checkoutInput = z
     billingSameAsShipping: z.boolean().default(true),
     billing: addressInput.optional(),
     notes: z.string().trim().max(2000).optional().or(z.literal("")),
-    paymentMethod: z.enum(["cod", "bank"]).default("cod"),
+    paymentMethod: z.literal("cod").default("cod"),
     /** Guests may open an account as they check out. */
     createAccount: z.boolean().default(false),
     password: z.string().optional().or(z.literal("")),
@@ -68,15 +68,10 @@ export function shippingFor(subtotal: number, threshold: number) {
   return subtotal >= threshold ? 0 : SHIPPING_FLAT_RATE;
 }
 
-export const PAYMENT_METHODS = [
-  {
-    value: "cod",
-    label: "Cash on delivery",
-    description: "Pay the courier when the parcel arrives.",
-  },
-  {
-    value: "bank",
-    label: "Bank transfer",
-    description: "We send account details with your confirmation.",
-  },
-] as const;
+/** The only way to pay. Kept as a named constant so the checkout and
+ *  the order summary say the same words. */
+export const PAYMENT_METHOD = {
+  value: "cod",
+  label: "Cash on delivery",
+  description: "Pay the courier in cash when the parcel arrives.",
+} as const;

@@ -7,10 +7,10 @@ import { useState } from "react";
 import { Controller, useForm, type Control, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Lock } from "lucide-react";
+import { Banknote, Loader2, Lock } from "lucide-react";
 import { api } from "@/trpc/react";
 import { useCart } from "@/components/cart/cart-context";
-import { checkoutInput, PAYMENT_METHODS } from "@/lib/checkout";
+import { checkoutInput, PAYMENT_METHOD } from "@/lib/checkout";
 import { COUNTRY, formatPrice } from "@/lib/shop-config";
 import { Button } from "@/components/ui-kit/button";
 import { Checkbox } from "@/components/ui-kit/checkbox";
@@ -243,25 +243,15 @@ export function CheckoutForm({
           <SectionHead step="03" title="Payment" />
 
           <FieldGroup>
-            <Controller
-              name="paymentMethod"
-              control={control}
-              render={({ field }) => (
-                <RadioGroup value={field.value} onValueChange={field.onChange} className="gap-3">
-                  {PAYMENT_METHODS.map((option) => (
-                    <FieldLabel key={option.value} htmlFor={`pay-${option.value}`}>
-                      <Field orientation="horizontal">
-                        <RadioGroupItem id={`pay-${option.value}`} value={option.value} />
-                        <div className="flex-1">
-                          <p className="font-medium">{option.label}</p>
-                          <FieldDescription>{option.description}</FieldDescription>
-                        </div>
-                      </Field>
-                    </FieldLabel>
-                  ))}
-                </RadioGroup>
-              )}
-            />
+            {/* One way to pay, so this states it rather than asking.
+                The value is still submitted with the order. */}
+            <div className="flex items-start gap-3 border border-border bg-muted/40 p-5">
+              <Banknote className="mt-0.5 size-5 shrink-0 text-primary" />
+              <div>
+                <p className="font-medium">{PAYMENT_METHOD.label}</p>
+                <FieldDescription>{PAYMENT_METHOD.description}</FieldDescription>
+              </div>
+            </div>
 
             <Controller
               name="notes"
