@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import type { Product } from "@/lib/catalogue";
 import { cn } from "@/lib/cn";
 import { Markdown } from "@/components/markdown";
@@ -10,7 +9,6 @@ export function ProductTabs({ product }: { product: Product }) {
   const tabs = [
     { id: "description", label: "Description" },
     { id: "specification", label: "Specification" },
-    { id: "documents", label: "Documents" },
   ] as const;
 
   const [active, setActive] = useState<(typeof tabs)[number]["id"]>("description");
@@ -85,22 +83,6 @@ export function ProductTabs({ product }: { product: Product }) {
               </div>
             ))}
           </dl>
-        ) : null}
-
-        {active === "documents" ? (
-          <div className="space-y-5">
-            <p className="leading-relaxed text-foreground/75">
-              Technical and safety data sheets are issued by the technical desk
-              against the current revision. Tell us which products you are
-              working with and we will send them over.
-            </p>
-            <Link
-              href="/contact"
-              className="label inline-block border-b-2 border-primary pb-1 text-foreground"
-            >
-              Request documentation →
-            </Link>
-          </div>
         ) : null}
       </div>
     </div>
