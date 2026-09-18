@@ -1309,13 +1309,31 @@ function TagInput({ value, onChange }: { value: string[]; onChange: (v: string[]
   const [draft, setDraft] = useState("");
   const suggestions = api.product.tagOptions.useQuery();
 
+  /* Anything that reasonably separates a list: commas, semicolons,
+     tabs, and line breaks — so a column copied out of a spreadsheet
+     arrives as tags rather than as one long tag. */
+  const SEPARATORS = /[,;\t\r\n]+/;
+
   function add(raw: string) {
-    const tags = raw
-      .split(",")
-      .map((t) => t.trim())
+    const incoming = raw
+      .split(SEPARATORS)
+      .map((tag) => tag.trim())
       .filter(Boolean);
-    if (!tags.length) return;
-    onChange(Array.from(new Set([...value, ...tags])));
+    if (!incoming.length) return;
+
+    /* Matched without case so "Ceramic" does not join "ceramic", but
+       whichever spelling arrived first is the one kept. */
+    const seen = new Set(value.map((tag) => tag.toLowerCase()));
+    const next = [...value];
+
+    for (const tag of incoming) {
+      const key = tag.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      next.push(tag);
+    }
+
+    if (next.length !== value.length) onChange(next);
     setDraft("");
   }
 
@@ -1327,10 +1345,22 @@ function TagInput({ value, onChange }: { value: string[]; onChange: (v: string[]
           list="tag-suggestions"
           placeholder="Add a tag, then press Enter"
           onChange={(event) => setDraft(event.target.value)}
+          onPaste={(event) => {
+            const text = event.clipboardData.getData("text");
+            // A single tag pastes normally; a list is broken up here.
+            if (!SEPARATORS.test(text)) return;
+            event.preventDefault();
+            add(text);
+          }}
           onKeyDown={(event) => {
             if (event.key === "Enter" || event.key === ",") {
               event.preventDefault();
               add(draft);
+              return;
+            }
+            // Backspace on an empty box takes the last tag back off.
+            if (event.key === "Backspace" && !draft && value.length) {
+              onChange(value.slice(0, -1));
             }
           }}
         />
@@ -1346,7 +1376,7 @@ function TagInput({ value, onChange }: { value: string[]; onChange: (v: string[]
         </datalist>
       </div>
       {value.length ? (
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
           {value.map((tag) => (
             <Badge key={tag} variant="secondary" className="gap-1 pr-1">
               {tag}
@@ -1360,10 +1390,21 @@ function TagInput({ value, onChange }: { value: string[]; onChange: (v: string[]
               </button>
             </Badge>
           ))}
+
+          <button
+            type="button"
+            onClick={() => onChange([])}
+            className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+          >
+            Clear all
+          </button>
         </div>
-      ) : (
-        <p className="text-xs text-muted-foreground">Separate tags with commas.</p>
-      )}
+      ) : null}
+
+      <p className="text-xs text-muted-foreground">
+        Press Enter or type a comma to add one. Paste a comma-separated list, or
+        one tag per line, and they are split up for you.
+      </p>
     </div>
   );
 }
