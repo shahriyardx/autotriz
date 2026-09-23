@@ -118,6 +118,21 @@ export const services: Service[] = [
   },
 ];
 
+/* The people a customer meets at the unit. Photos live in
+   `public/photo/team/`; a member with no photo falls back to the brand
+   mark, so the row still reads as a set while pictures are pending. */
+export type TeamMember = {
+  name: string;
+  role: string;
+  image?: string;
+};
+
+export const team: TeamMember[] = [
+  { name: "Full Name", role: "PPF Specialist" },
+  { name: "Full Name", role: "Coating Technician" },
+  { name: "Full Name", role: "Detailing Lead" },
+];
+
 export const certifications = [
   { name: "TÜV SÜD", note: "Independently tested" },
   { name: "SGS", note: "Inspected and certified" },

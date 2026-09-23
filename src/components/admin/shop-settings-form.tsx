@@ -79,15 +79,24 @@ export function ShopSettingsForm({ initial }: { initial: ShopSettings }) {
       onSubmit={form.handleSubmit((values) => save.mutate(values))}
       className="space-y-6"
     >
-      <div className="flex flex-wrap items-center justify-end gap-2">
-        <Button type="button" variant="ghost" onClick={() => setResetting(true)}>
-          <RotateCcw className="h-4 w-4" />
-          Reset
-        </Button>
-        <Button type="submit" disabled={save.isPending || !form.formState.isDirty}>
-          {save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-          Save changes
-        </Button>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Your contact details, opening hours and social accounts, as they
+            appear in the header, the footer and on the contact page.
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <Button type="button" variant="ghost" onClick={() => setResetting(true)}>
+            <RotateCcw className="h-4 w-4" />
+            Reset
+          </Button>
+          <Button type="submit" disabled={save.isPending || !form.formState.isDirty}>
+            {save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            Save changes
+          </Button>
+        </div>
       </div>
 
       <Card>

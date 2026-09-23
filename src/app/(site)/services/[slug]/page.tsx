@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Award } from "lucide-react";
 import { Faq } from "@/components/faq";
 import { Newsletter } from "@/components/newsletter";
 import { ProductBanner } from "@/components/shop/product-banner";
 import { Reveal } from "@/components/reveal";
+import { Split } from "@/components/split";
+import { Team } from "@/components/team";
 import { Band, Button, Heading, Stat } from "@/components/ui";
 import { listProducts } from "@/lib/catalogue";
 import { serviceFaq, servicesFaq } from "@/lib/faq";
@@ -60,12 +63,17 @@ export default async function ServicePage({
         ]}
       />
 
+      {/* ================================================================
+          ABOUT THE SERVICE
+          Photograph on the left, the writing on the right.
+          ================================================================ */}
       <Band tone="white">
-        <div className="shell grid gap-14 lg:grid-cols-12">
-          <div className="lg:col-span-7">
-            <Heading align="left" size="sm">
-              About the service
-            </Heading>
+        <div className="shell">
+          <Split eyebrow="About the service" image={service.image} imageAlt={service.name}>
+            <h2 className="display mt-5 text-[clamp(1.75rem,3.4vw,2.75rem)]">
+              Perfection in every{" "}
+              <span className="accent">detail</span>
+            </h2>
             {service.body.map((para) => (
               <p key={para} className="mt-6 leading-relaxed text-foreground/75">
                 {para}
@@ -77,20 +85,39 @@ export default async function ServicePage({
                 All services
               </Button>
             </div>
-          </div>
-          <aside className="lg:col-span-4 lg:col-start-9">
-            <div className="border-t-2 border-primary bg-muted p-8">
-              <p className="label text-muted-foreground">What you get</p>
-              <ul className="mt-6 space-y-4">
-                {service.highlights.map((h) => (
-                  <li key={h} className="flex items-start gap-3 text-foreground">
-                    <span aria-hidden className="mt-2.5 h-1 w-3 shrink-0 bg-primary" />
-                    {h}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </aside>
+          </Split>
+        </div>
+      </Band>
+
+      {/* ================================================================
+          WHAT YOU GET
+          The same block the other way round, with the highlights as a
+          grid rather than a list down the side.
+          ================================================================ */}
+      <Band tone="mist">
+        <div className="shell">
+          <Split
+            eyebrow="Why AUTOTRIZ"
+            image="/about/production-line.webp"
+            imageAlt="AUTOTRIZ coating bottles on the production line"
+            reverse
+          >
+            <h2 className="display mt-5 text-[clamp(1.75rem,3.4vw,2.75rem)]">
+              What you <span className="accent">get</span>
+            </h2>
+            <p className="mt-6 leading-relaxed text-foreground/75">{service.short}</p>
+
+            <ul className="mt-10 grid gap-6 sm:grid-cols-2">
+              {service.highlights.map((h) => (
+                <li key={h} className="flex items-start gap-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-primary/40 bg-background">
+                    <Award className="h-5 w-5 text-primary" aria-hidden />
+                  </span>
+                  <p className="pt-2 text-sm leading-relaxed font-medium text-foreground">{h}</p>
+                </li>
+              ))}
+            </ul>
+          </Split>
         </div>
       </Band>
 
@@ -142,6 +169,8 @@ export default async function ServicePage({
           </ul>
         </div>
       </Band>
+
+      <Team />
 
       <Band tone="white">
         <Faq items={faq} subhead={`About ${service.name.toLowerCase()}`} />

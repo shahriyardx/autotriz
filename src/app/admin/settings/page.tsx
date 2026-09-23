@@ -21,14 +21,6 @@ export default async function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Your contact details, opening hours and social accounts, as they
-          appear in the header, the footer and on the contact page.
-        </p>
-      </div>
-
       <ShopSettingsForm initial={settings} />
 
       <Card>
